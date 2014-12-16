@@ -1,8 +1,8 @@
-from import Form, TextField, TextAreaField, SubmitField
+from flask.ext.wtf import Form
+from wtforms import TextField, TextAreaField, SubmitField
  
 class RegistrationForm(Form):
-  name = TextField("Name")
-  email = TextField("Email")
-  subject = TextField("Subject")
-  message = TextAreaField("Message")
-  submit = SubmitField("Send")
+    name = TextField("Name")
+    email = TextField("Email")
+    password = TextField("Password")
+    submit = SubmitField("Send")

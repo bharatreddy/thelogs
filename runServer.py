@@ -1,2 +1,2 @@
-from intro_to_flask import app
+from bear import app
 app.run(debug=True)

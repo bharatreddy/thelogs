@@ -1,9 +1,12 @@
-from intro_to_flask import app
+from bear import app
 from flask import Flask, render_template, request, jsonify, flash
 from forms import RegistrationForm
+from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
-app = Flask(__name__)
+# app = Flask(__name__)
+
+mail = Mail()
 
 db = MySQLdb.connect( user='root', host='localhost', port=3306, db='cricdata' )
 
@@ -29,6 +32,6 @@ def contact():
       return 'Form posted.'
     return render_template('contact.html', form=form)
 
-if __name__ == "__main__":
-    app.debug=True
-    app.run()
+# if __name__ == "__main__":
+#     app.debug=True
+#     app.run()

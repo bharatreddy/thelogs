@@ -7,10 +7,5 @@ app.secret_key = '@dec152014#'
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = 'contact@example.com'
-app.config["MAIL_PASSWORD"] = ''
- 
-from routes import mail
-mail.init_app(app)
- 
-import intro_to_flask.routes
+
+import bear.routes
