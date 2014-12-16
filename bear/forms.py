@@ -5,4 +5,5 @@ class RegistrationForm(Form):
     name = TextField("Name")
     email = TextField("Email")
     password = TextField("Password")
-    submit = SubmitField("Send")
+    confirmpassword = TextField("Confirm Password")
+    submit = SubmitField("Register")
