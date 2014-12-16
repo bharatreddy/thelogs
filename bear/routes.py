@@ -4,11 +4,7 @@ from forms import RegistrationForm
 from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
-# app = Flask(__name__)
-
-mail = Mail()
-
-db = MySQLdb.connect( user='root', host='localhost', port=3306, db='cricdata' )
+from models import db
 
 @app.route("/")
 def hello():
