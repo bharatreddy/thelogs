@@ -4,7 +4,7 @@ from forms import RegistrationForm
 from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
-from models import db
+from models import dbAlc
 
 @app.route("/")
 def hello():
