@@ -1,21 +1,14 @@
 from bear import app
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, url_for
-from forms import RegistrationForm
+from forms import RegistrationForm, SigninForm
 from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
 from models import dbAlc, User
 
 @app.route("/")
-def hello():
+def home():
     return render_template('index.html')
-
-@app.route("/<pagename>")
-def regularpage( pagename=None ):
-    """
-    if route not found
-    """
-    return "No such page as " + pagename + " please go back!!! "
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
@@ -59,6 +52,32 @@ def profile():
         return redirect(url_for('signin'))
     else:
         return render_template('profile_layout.html', profileName=userName)
+
+@app.route("/signin", methods=['GET', 'POST'])
+def signin():
+    form = SigninForm()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('signin.html', form=form)
+        else:
+            session['email'] = form.email.data
+            return redirect(url_for('profile'))             
+    elif request.method == 'GET':
+        return render_template('signin.html', form=form)
+
+@app.route("/signout")
+def signout(): 
+    if 'email' not in session:
+        return redirect(url_for('signin'))
+    session.pop('email', None)
+    return redirect(url_for("home"))
+
+@app.route("/<pagename>")
+def regularpage( pagename=None ):
+    """
+    if route not found
+    """
+    return "No such page as " + pagename + " please go back!!! "
 
 # if __name__ == "__main__":
 #     app.debug=True
