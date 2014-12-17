@@ -33,8 +33,20 @@ def contact():
     elif request.method == 'GET':
         return render_template('contact.html', form=form)
 
-@app.route("/profile") 
-def profile(): 
+@app.route("/signin", methods=['GET', 'POST'])
+def signin():
+    form = SigninForm()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('signin.html', form=form)
+        else:
+            session['email'] = form.email.data
+            return redirect(url_for('profile'))             
+    elif request.method == 'GET':
+        return render_template('signin.html', form=form)
+
+@app.route("/profile")
+def profile():
     # fucntion to access the profile page of the user
     if 'email' not in session:
         return redirect(url_for('signin'))
@@ -52,18 +64,6 @@ def profile():
         return redirect(url_for('signin'))
     else:
         return render_template('profile_layout.html', profileName=userName)
-
-@app.route("/signin", methods=['GET', 'POST'])
-def signin():
-    form = SigninForm()
-    if request.method == 'POST':
-        if form.validate() == False:
-            return render_template('signin.html', form=form)
-        else:
-            session['email'] = form.email.data
-            return redirect(url_for('profile'))             
-    elif request.method == 'GET':
-        return render_template('signin.html', form=form)
 
 @app.route("/signout")
 def signout(): 
