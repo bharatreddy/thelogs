@@ -65,6 +65,26 @@ def profile():
     else:
         return render_template('profile_layout.html', profileName=userName)
 
+@app.route("/newtrans")
+def newtrans():
+    # fucntion to access the profile page of the user
+    if 'email' not in session:
+        return redirect(url_for('signin'))
+    # Check if the user is in our db
+    user = User.query.filter_by(email = session['email']).first()
+    dbRaw = \
+    MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
+    # check if the email-id is already taken
+    queryUserChk = " SELECT name FROM Users WHERE email = " \
+    + "'" + session['email'] + "'"
+    dbRaw.query( queryUserChk )
+    userDetails = dbRaw.store_result().fetch_row( maxrows=0 )
+    userName = userDetails[0][0]
+    if userDetails is None:
+        return redirect(url_for('signin'))
+    else:
+        return render_template('transactions.html', profileName=userName)
+
 @app.route("/signout")
 def signout(): 
     if 'email' not in session:
