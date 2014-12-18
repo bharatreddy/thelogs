@@ -6,6 +6,11 @@ class GetListedStocks(object):
 
     def __init__(self):
         import string
+        import mysql.connector
+        # set up connections to the DB
+        self.conn = mysql.connector.Connect(host='localhost',user='root',\
+                                password='',database='Logbook')
+        self.cursor = self.conn.cursor()
         # get the base urls from rediff
         self.baseUrl = 'http://money.rediff.com/companies/nseall/'
 
@@ -43,7 +48,6 @@ class GetListedStocks(object):
         # Here the even numbered tags have the company info
         # the odd numbered tags have company symbol, so we need
         # take that into account. Store the results in a dict
-        stockDict = {}
         # get a list of all the urls associated
         allUrlsList = self.get_all_urls()
         # loop through each url and soupify
@@ -56,9 +60,27 @@ class GetListedStocks(object):
             for stabs in stocksTab:
                 tdTags = stabs.findAll('td')
                 for n, t in enumerate(tdTags):
+                    stockDict = {}
                     currText = t.text
                     currText = ' '.join(currText.split())
+                    stockDict['name'] = currText
                     if n%2 == 0 :
                         symbolText = tdTags[n+1].text
-                        stockDict[currText] = symbolText
-        return stockDict
+                        stockDict['symbol'] = symbolText
+                        # update the sql table
+                        self.popStockSymTab(stockDict)
+        return "Done updating the table"
+
+    def popStockSymTab(self, stockDict):
+        # populate the stock symbols tab
+        query = ("INSERT INTO StockSymbols "
+               " (stocksymbol, stockname) "
+               " VALUES (%s, %s) "
+               " ON DUPLICATE KEY UPDATE "
+               "   stocksymbol=VALUES(stocksymbol), "
+               "   stockname=VALUES(stockname) ")
+        params = (
+            stockDict["symbol"], 
+            stockDict["name"])
+        self.cursor.execute(query, params)
+        self.conn.commit()
