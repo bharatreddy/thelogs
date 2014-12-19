@@ -23,7 +23,9 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <script src="static/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" href="static/jquery-ui.css">
+    <script src="static/jquery-ui.js"></script>
 </head>
 
 <body>
@@ -58,6 +60,9 @@
                     <div class="col-lg-12">
                         <h1>{{ profileName }}</h1>
                     </div>
+                    {% for message in form.stockSymbol.errors %}
+                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
                     {% for message in form.date.errors %}
                         <font size="16" color="white"><div class="flash">{{ message }}</div></font>
                     {% endfor %}

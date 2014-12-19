@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, TextAreaField, SubmitField, PasswordField, \
-validators, ValidationError, DateTimeField, IntegerField, FloatField
+validators, ValidationError, DateTimeField, IntegerField, FloatField, SelectField
 from models import dbAlc, User
 import MySQLdb
  
@@ -53,20 +53,31 @@ class SigninForm(Form):
             return False
 
 class InputTransForm(Form):
+    # get the list of stock symbols
+    dbRaw = \
+        MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
+    querySrchStr = "SELECT stocksymbol, stockname FROM StockSymbols"
+    dbRaw.query( querySrchStr )
+    query_results = dbRaw.store_result().fetch_row( maxrows=0 )
+    stckList = [ (res[0], res[0]) for res in query_results ]
     # form to record new transactions
     date = DateTimeField("Transaction Date", format='%d/%m/%Y %H:%M')
-    transType = TextField("Transaction Type",  \
-        [validators.Required("Transaction Type")])
+    transType = SelectField("Transaction Type",\
+     choices = [("BUY","Buy"), ("SELL","Sell")])
     quantity = IntegerField("Num of Shares",  \
          [validators.NumberRange(min=0, max=10)])
     unitPrice = FloatField('unit price', [validators.Required("unit price")])
-    stockSymbol = TextField("Stock Symbol",  [validators.Required("Stock Symbol")])
-    simulated = TextField("Simulated",  [validators.Required("Simulated")])
+    stockSymbol = SelectField("Stock Symbols",\
+     choices = stckList)
+    #TextField("Stock Symbol",  [validators.Required("Stock Symbol")],id='stSymAuto')
+    simulated = SelectField("Simulated",\
+     choices = [("No","No"), ("Yes","Yes")])
     submit = SubmitField("Submit")
    
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
-    # validate the form
+
+    # validate the form    
     def validate(self):
         if not Form.validate(self):
             return False

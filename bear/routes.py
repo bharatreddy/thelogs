@@ -1,5 +1,6 @@
 from bear import app
-from flask import Flask, render_template, request, jsonify, flash, session, redirect, url_for
+from flask import Flask, Response,render_template, \
+request, jsonify, flash, session, redirect, url_for
 from forms import RegistrationForm, SigninForm, InputTransForm
 from flask.ext.mail import Message, Mail
 import MySQLdb
@@ -94,6 +95,7 @@ def newtrans():
         elif request.method == 'GET':
             return render_template('transactions.html', \
                 form=form, profileName=userName)
+
 
 @app.route("/signout")
 def signout(): 
