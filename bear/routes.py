@@ -6,6 +6,7 @@ from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
 from models import dbAlc, User
+import mysql.connector
 
 @app.route("/")
 def home():
@@ -66,7 +67,7 @@ def profile():
     else:
         return render_template('profile_layout.html', profileName=userName)
 
-@app.route("/newtrans")
+@app.route("/newtrans", methods=['GET', 'POST'])
 def newtrans():
     form = InputTransForm()
     # fucntion to access the profile page of the user
@@ -77,21 +78,52 @@ def newtrans():
     dbRaw = \
     MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
     # check if the email-id is already taken
-    queryUserChk = " SELECT name FROM Users WHERE email = " \
+    queryUserChk = " SELECT name, userid FROM Users WHERE email = " \
     + "'" + session['email'] + "'"
     dbRaw.query( queryUserChk )
     userDetails = dbRaw.store_result().fetch_row( maxrows=0 )
     userName = userDetails[0][0]
+    currUserId = userDetails[0][1]
     if userDetails is None:
         return redirect(url_for('signin'))
     else:
         if request.method == 'POST':
             if form.validate() == False:
                 return render_template('transactions.html', \
-                    form=form, profileName=userName)
+                    form=form, profileName=userName, transMessage="" )
             else:
-                session['email'] = form.email.data
-                return redirect(url_for('profile'))             
+                # Nothing wrong with the form.
+                # Enter into the database
+                # set up connections to the DB
+                conn = mysql.connector.Connect(host='localhost',user='root',\
+                                        password='',database='Logbook')
+                cursor = conn.cursor()
+                # build necessary parameters for the query
+
+                query = ("INSERT INTO StockTransactions "
+                       " (userid, stock_symbol, date, transaction_type_id, quantity, cost_per_unit, simulated) "
+                       " VALUES (%s, %s,%s, %s,%s, %s, %s) "
+                       " ON DUPLICATE KEY UPDATE "
+                       "   userid=VALUES(userid), "
+                       "   stock_symbol=VALUES(stock_symbol), "
+                       "   date=VALUES(date), "
+                       "   transaction_type_id=VALUES(transaction_type_id), "
+                       "   quantity=VALUES(quantity), "
+                       "   cost_per_unit=VALUES(cost_per_unit), "
+                       "   simulated=VALUES(simulated) ")
+                params = (
+                    currUserId, 
+                    form.stockSymbol.data,
+                    form.date.data,
+                    int(form.transType.data),
+                    form.quantity.data,
+                    form.unitPrice.data,
+                    form.simulated.data
+                    )
+                cursor.execute(query, params)
+                conn.commit()
+                # If all is good get the profile page of the user
+                return redirect(url_for('profile'))
         elif request.method == 'GET':
             return render_template('transactions.html', \
                 form=form, profileName=userName)

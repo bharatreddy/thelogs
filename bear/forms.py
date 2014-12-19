@@ -63,9 +63,9 @@ class InputTransForm(Form):
     # form to record new transactions
     date = DateTimeField("Transaction Date", format='%d/%m/%Y %H:%M')
     transType = SelectField("Transaction Type",\
-     choices = [("BUY","Buy"), ("SELL","Sell")])
+     choices = [("1","Buy"), ("2","Sell")])
     quantity = IntegerField("Num of Shares",  \
-         [validators.NumberRange(min=0, max=10)])
+         [validators.NumberRange(min=0, max=10000000)])
     unitPrice = FloatField('unit price', [validators.Required("unit price")])
     stockSymbol = SelectField("Stock Symbols",\
      choices = stckList)
@@ -80,10 +80,4 @@ class InputTransForm(Form):
     # validate the form    
     def validate(self):
         if not Form.validate(self):
-            return False
-        user = User.query.filter_by(email=self.email.data.lower()).first()
-        if user and user.check_password(self.password.data):
-            return True
-        else:
-            self.email.errors.append("Invalid email or password")
             return False

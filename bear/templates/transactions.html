@@ -59,15 +59,16 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1>{{ profileName }}</h1>
+                        <h3>{{ transMessage }}</h3>
                     </div>
                     {% for message in form.stockSymbol.errors %}
-                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
                     {% endfor %}
                     {% for message in form.date.errors %}
-                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
                     {% endfor %}
                     {% for message in form.transType.errors %}
-                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
                     {% endfor %}
                     {% for message in form.quantity.errors %}
                         <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
