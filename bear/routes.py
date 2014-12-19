@@ -1,6 +1,6 @@
 from bear import app
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, url_for
-from forms import RegistrationForm, SigninForm
+from forms import RegistrationForm, SigninForm, InputTransForm
 from flask.ext.mail import Message, Mail
 import MySQLdb
 import json
@@ -67,6 +67,7 @@ def profile():
 
 @app.route("/newtrans")
 def newtrans():
+    form = InputTransForm()
     # fucntion to access the profile page of the user
     if 'email' not in session:
         return redirect(url_for('signin'))
@@ -83,7 +84,16 @@ def newtrans():
     if userDetails is None:
         return redirect(url_for('signin'))
     else:
-        return render_template('transactions.html', profileName=userName)
+        if request.method == 'POST':
+            if form.validate() == False:
+                return render_template('transactions.html', \
+                    form=form, profileName=userName)
+            else:
+                session['email'] = form.email.data
+                return redirect(url_for('profile'))             
+        elif request.method == 'GET':
+            return render_template('transactions.html', \
+                form=form, profileName=userName)
 
 @app.route("/signout")
 def signout(): 

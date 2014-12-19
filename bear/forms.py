@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, TextAreaField, SubmitField, PasswordField, validators, ValidationError
+from wtforms import TextField, TextAreaField, SubmitField, PasswordField, \
+validators, ValidationError, DateTimeField, IntegerField, FloatField
 from models import dbAlc, User
 import MySQLdb
  
@@ -37,6 +38,31 @@ class SigninForm(Form):
     email = TextField("Email",  [validators.Required("Email")])
     password = PasswordField("Password", [validators.Required("password")])
     submit = SubmitField("Sign In")
+   
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+    # validate the form
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        user = User.query.filter_by(email=self.email.data.lower()).first()
+        if user and user.check_password(self.password.data):
+            return True
+        else:
+            self.email.errors.append("Invalid email or password")
+            return False
+
+class InputTransForm(Form):
+    # form to record new transactions
+    date = DateTimeField("Transaction Date", format='%d/%m/%Y %H:%M')
+    transType = TextField("Transaction Type",  \
+        [validators.Required("Transaction Type")])
+    quantity = IntegerField("Num of Shares",  \
+         [validators.NumberRange(min=0, max=10)])
+    unitPrice = FloatField('unit price', [validators.Required("unit price")])
+    stockSymbol = TextField("Stock Symbol",  [validators.Required("Stock Symbol")])
+    simulated = TextField("Simulated",  [validators.Required("Simulated")])
+    submit = SubmitField("Submit")
    
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)

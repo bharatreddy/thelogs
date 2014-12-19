@@ -57,8 +57,88 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1>{{ profileName }}</h1>
-                        <p>Enter new transactions below</p>
                     </div>
+                    {% for message in form.date.errors %}
+                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
+                    {% for message in form.transType.errors %}
+                        <font size="16" color="white"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
+                    {% for message in form.quantity.errors %}
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
+                    {% for message in form.unitPrice.errors %}
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
+                    {% for message in form.simulated.errors %}
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
+                    <form class="form-horizontal" action="{{ url_for('newtrans') }}" method=post>
+                            <div class="container">
+                                <div class="row centered-form">
+                                <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                                <h3 class="panel-title"><font color="steelblue">Enter new transactions below</font></h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    {{ form.hidden_tag() }}
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.stockSymbol.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.stockSymbol }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.date.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.date }}</font>
+                                                            <font color="steelblue">(dd/mm/yyyy hh:mm)</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.transType.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.transType }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.quantity.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.quantity }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.unitPrice.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.unitPrice }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.simulated.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.simulated }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <font color="steelblue">{{ form.submit }}</font>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                 </div>
             </div>
         </div>
