@@ -31,3 +31,11 @@ class GetStockPrice(object):
         # soupify
         urlData = urllib2.urlopen(self.stockUrl).read()
         soup = bs4.BeautifulSoup(urlData)
+        # the time and cost info is associated with a class
+        # with tags yfi_rt_quote_summary_rt_top, sigfig_promo_0
+        stockDivs = soup.findAll( \
+            attrs={'class': "yfi_rt_quote_summary_rt_top"} )
+        stockPriceTags = stockDivs[0].findAll('span')
+        currStockPrice = stockPriceTags[0].text
+        currTime = stockPriceTags[-1].text
+        print currTime, currStockPrice
