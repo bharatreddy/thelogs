@@ -72,6 +72,8 @@ class InputTransForm(Form):
     #TextField("Stock Symbol",  [validators.Required("Stock Symbol")],id='stSymAuto')
     simulated = SelectField("Simulated",\
      choices = [("No","No"), ("Yes","Yes")])
+    exchange = SelectField("Exchange",\
+     choices = [("NSE","NSE"), ("BSE","BSE")])
     submit = SubmitField("Submit")
    
     def __init__(self, *args, **kwargs):

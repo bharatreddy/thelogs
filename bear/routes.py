@@ -101,8 +101,8 @@ def newtrans():
                 # build necessary parameters for the query
 
                 query = ("INSERT INTO StockTransactions "
-                       " (userid, stock_symbol, date, transaction_type_id, quantity, cost_per_unit, simulated) "
-                       " VALUES (%s, %s,%s, %s,%s, %s, %s) "
+                       " (userid, stock_symbol, date, transaction_type_id, quantity, cost_per_unit, stock_exchange, simulated) "
+                       " VALUES (%s, %s,%s, %s,%s, %s, %s, %s) "
                        " ON DUPLICATE KEY UPDATE "
                        "   userid=VALUES(userid), "
                        "   stock_symbol=VALUES(stock_symbol), "
@@ -110,6 +110,7 @@ def newtrans():
                        "   transaction_type_id=VALUES(transaction_type_id), "
                        "   quantity=VALUES(quantity), "
                        "   cost_per_unit=VALUES(cost_per_unit), "
+                       "   stock_exchange=VALUES(stock_exchange), "
                        "   simulated=VALUES(simulated) ")
                 params = (
                     currUserId, 
@@ -118,6 +119,7 @@ def newtrans():
                     int(form.transType.data),
                     form.quantity.data,
                     form.unitPrice.data,
+                    form.exchange.data,
                     form.simulated.data
                     )
                 cursor.execute(query, params)

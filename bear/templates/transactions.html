@@ -76,6 +76,9 @@
                     {% for message in form.unitPrice.errors %}
                         <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
                     {% endfor %}
+                    {% for message in form.exchange.errors %}
+                        <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
+                    {% endfor %}
                     {% for message in form.simulated.errors %}
                         <font size="16" color="crimson"><div class="flash">{{ message }}</div></font>
                     {% endfor %}
@@ -128,6 +131,14 @@
                                                         </div>
                                                         <div class="col-xs-6 col-sm-6 col-md-6 form-group">
                                                             <font color="gray">{{ form.unitPrice }}</font>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="steelblue">{{ form.exchange.label }}</font>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-6 form-group">
+                                                            <font color="gray">{{ form.exchange }}</font>
                                                         </div>
                                                     </div>
                                                     <div class="row">
