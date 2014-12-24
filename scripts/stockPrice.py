@@ -38,4 +38,4 @@ class GetStockPrice(object):
         stockPriceTags = stockDivs[0].findAll('span')
         currStockPrice = stockPriceTags[0].text
         currTime = stockPriceTags[-1].text
-        print currTime, currStockPrice
+        return currTime, currStockPrice
