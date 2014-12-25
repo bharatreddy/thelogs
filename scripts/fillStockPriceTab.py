@@ -1,7 +1,10 @@
 if __name__ == "__main__":
+    import time
     import fillStockPriceTab
     stp = fillStockPriceTab.FillStockPriceTable()
-    stp.fill_stock_price_tab()
+    while True:
+        stp.active_stock_prices()
+        time.sleep(60.)
 
 class FillStockPriceTable(object):
     """

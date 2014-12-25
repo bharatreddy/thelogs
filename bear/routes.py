@@ -57,14 +57,16 @@ def profile():
     dbRaw = \
     MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
     # check if the email-id is already taken
-    queryUserChk = " SELECT name FROM Users WHERE email = " \
+    queryUserChk = " SELECT userid, name FROM Users WHERE email = " \
     + "'" + session['email'] + "'"
     dbRaw.query( queryUserChk )
     userDetails = dbRaw.store_result().fetch_row( maxrows=0 )
-    userName = userDetails[0][0]
+    # check if we have the email in our database of users.
     if userDetails is None:
         return redirect(url_for('signin'))
     else:
+        userId = userDetails[0][0]
+        userName = userDetails[0][1]
         return render_template('profile_layout.html', profileName=userName)
 
 @app.route("/newtrans", methods=['GET', 'POST'])
