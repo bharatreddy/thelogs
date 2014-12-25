@@ -67,7 +67,38 @@ def profile():
     else:
         userId = userDetails[0][0]
         userName = userDetails[0][1]
+        # get number of active stocks (sell-buy>0), 
+        # prices of shares for the user
+        actvStckDF = getTransactions(userId)
         return render_template('profile_layout.html', profileName=userName)
+
+def getTransactions(userId):
+    # get acvtive shares of the user along with the current price
+    import pandas
+    qryNumStocks = "SELECT stock_symbol,stock_exchange,"+\
+        "sum(quantity*(case when transaction_type_id=1 then 1 else -1 end)) as active_num"+\
+        " FROM stockTransactions WHERE "+ "userid = "+ str(userId)+\
+        " GROUP BY stock_symbol, stock_exchange;"
+    # set up connections to the DB
+    conn = mysql.connector.Connect(host='localhost',user='root',\
+                        password='',database='Logbook')
+    numStocksDF = pandas.read_sql( qryNumStocks, conn )
+    # we only need stocks which currently have shares
+    numStocksDF = numStocksDF[numStocksDF['active_num'] > 0].reset_index(drop=True)
+    # get a list of the active stocks to retreive the current price
+    actvStockList = numStocksDF['stock_symbol'].tolist()
+    stckList = ""
+    for nst, stsym in enumerate(actvStockList):
+        stckList += "'"+stsym+"'"
+        if nst < len(actvStockList)-1:
+            stckList += ", "
+    qryCurrPrice = "SELECT * FROM StockPrices WHERE stock_symbol IN (" \
+        + stckList + ")"
+    actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
+    # merge the DFs
+    actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
+    print actvStcksDF
+    return numStocksDF
 
 @app.route("/newtrans", methods=['GET', 'POST'])
 def newtrans():
