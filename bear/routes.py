@@ -69,8 +69,12 @@ def profile():
         userName = userDetails[0][1]
         # get number of active stocks (sell-buy>0), 
         # prices of shares for the user
-        actvStckDF = getTransactions(userId)
-        return render_template('profile_layout.html', profileName=userName)
+        actvStcks = getTransactions(userId)
+        # to use it in jinja templates, we need to convert the DF
+        # into a list of dicts
+        actvStcks = actvStcks.T.to_dict().values()
+        return render_template('profile_layout.html', \
+            profileName=userName, activeStocks=actvStcks)
 
 def getTransactions(userId):
     # get acvtive shares of the user along with the current price
@@ -97,7 +101,7 @@ def getTransactions(userId):
     actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
     # merge the DFs
     actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
-    # Now calculate the revenue, based on the stock exchange
+    # Now calculate the revenue and other values based on the stock exchange
     actvStcksDF['revenue'] = actvStcksDF.apply( \
         lambda row: row['active_num']*row['NSE_cost_per_unit'] \
         if row['stock_exchange'] == 'NSE' \

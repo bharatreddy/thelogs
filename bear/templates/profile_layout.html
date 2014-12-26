@@ -72,38 +72,16 @@
                       </tr>
                    </thead>
                    <tbody>
+                      {% for actvstck in activeStocks %}
                       <tr class="active">
-                         <td>Product1</td>
-                         <td>23/11/2013</td>
-                         <td>Pending</td>
-                         <td>test</td>
-                         <td>test</td>
-                         <td>test</td>
+                         <td>{{ actvstck.stock_symbol }}</td>
+                         <td>{{ actvstck.active_num }}</td>
+                         <td>{{ actvstck.stock_exchange }}</td>
+                         <td>{{ actvstck.current_price }}</td>
+                         <td>{{ actvstck.price_updated }}</td>
+                         <td>{{ actvstck.revenue }}</td>
                       </tr>
-                      <tr class="success">
-                         <td>Product2</td>
-                         <td>10/11/2013</td>
-                         <td>Delivered</td>
-                         <td>test</td>
-                         <td>test</td>
-                         <td>test</td>
-                      </tr>
-                      <tr  class="warning">
-                         <td>Product3</td>
-                         <td>20/10/2013</td>
-                         <td>In Call to confirm</td>
-                         <td>test</td>
-                         <td>test</td>
-                         <td>test</td>
-                      </tr>
-                      <tr  class="danger">
-                         <td>Product4</td>
-                         <td>20/10/2013</td>
-                         <td>Declined</td>
-                         <td>test</td>
-                         <td>test</td>
-                         <td>test</td>
-                      </tr>
+                      {% endfor %}
                    </tbody>
                 </table>
             </div>
