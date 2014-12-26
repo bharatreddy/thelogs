@@ -97,8 +97,20 @@ def getTransactions(userId):
     actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
     # merge the DFs
     actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
-    print actvStcksDF
-    return numStocksDF
+    # Now calculate the revenue, based on the stock exchange
+    actvStcksDF['revenue'] = actvStcksDF.apply( \
+        lambda row: row['active_num']*row['NSE_cost_per_unit'] \
+        if row['stock_exchange'] == 'NSE' \
+        else row['active_num']*row['BSE_cost_per_unit'], axis=1)
+    actvStcksDF['current_price'] = actvStcksDF.apply( \
+        lambda row: row['NSE_cost_per_unit'] \
+        if row['stock_exchange'] == 'NSE' \
+        else row['BSE_cost_per_unit'], axis=1)
+    actvStcksDF['price_updated'] = actvStcksDF.apply( \
+        lambda row: row['NSE_datetime'] \
+        if row['stock_exchange'] == 'NSE' \
+        else row['BSE_datetime'], axis=1)
+    return actvStcksDF
 
 @app.route("/newtrans", methods=['GET', 'POST'])
 def newtrans():
