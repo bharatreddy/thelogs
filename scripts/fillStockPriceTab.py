@@ -103,6 +103,9 @@ class FillStockPriceTable(object):
                 (currBSEDate, currBSEPrice) = (None,None)
             print stsym, currNSEDate, currNSEPrice, currBSEDate, currBSEPrice
             # fill in the price info in the tables
+            # Now if we have None values in both BSE and NSE prices don't update
+            if ( (currNSEPrice is None) and (currBSEPrice is None) ):
+                continue
             try:
                 query = ("INSERT INTO StockPrices "
                        " (stock_symbol, NSE_cost_per_unit, NSE_datetime, BSE_cost_per_unit, BSE_datetime) "
@@ -171,6 +174,9 @@ class FillStockPriceTable(object):
                 (currBSEDate, currBSEPrice) = (None,None)
             print stsym, currNSEDate, currNSEPrice, currBSEDate, currBSEPrice
             # fill in the price info in the tables
+            # Now if we have None values in both BSE and NSE prices don't update
+            if ( (currNSEPrice is None) and (currBSEPrice is None) ):
+                continue
             try:
                 query = ("INSERT INTO StockPrices "
                        " (stock_symbol, NSE_cost_per_unit, NSE_datetime, BSE_cost_per_unit, BSE_datetime) "
