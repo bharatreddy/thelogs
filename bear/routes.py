@@ -79,6 +79,7 @@ def profile():
 def getTransactions(userId):
     # get acvtive shares of the user along with the current price
     import pandas
+    import numpy
     qryNumStocks = "SELECT stock_symbol,stock_exchange,"+\
         "sum(quantity*(case when transaction_type_id=1 then 1 else -1 end)) as active_num"+\
         " FROM stockTransactions WHERE "+ "userid = "+ str(userId)+\
@@ -101,6 +102,10 @@ def getTransactions(userId):
     actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
     # merge the DFs
     actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
+    # Before we do further calculations, replace all None types to zero and 
+    # then get them back to None types. We get None's when the stock price update
+    # fails.
+    actvStcksDF = actvStcksDF.fillna(0)
     # Now calculate the revenue and other values based on the stock exchange
     actvStcksDF['revenue'] = actvStcksDF.apply( \
         lambda row: row['active_num']*row['NSE_cost_per_unit'] \
@@ -114,6 +119,8 @@ def getTransactions(userId):
         lambda row: row['NSE_datetime'] \
         if row['stock_exchange'] == 'NSE' \
         else row['BSE_datetime'], axis=1)
+    # if there are any zeros, print an error message
+    actvStcksDF[actvStcksDF['revenue'] == 0] = "System not updating"
     return actvStcksDF
 
 @app.route("/newtrans", methods=['GET', 'POST'])
