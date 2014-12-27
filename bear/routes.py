@@ -69,7 +69,9 @@ def profile():
         userName = userDetails[0][1]
         # get number of active stocks (sell-buy>0), 
         # prices of shares for the user
-        actvStcks = getTransactions(userId)
+        actvStcks = getActiveStocks(userId)
+        transStcks = getTransactions(userId)
+        print transStcks
         # to use it in jinja templates, we need to convert the DF
         # into a list of dicts
         actvStcks = actvStcks.T.to_dict().values()
@@ -77,6 +79,23 @@ def profile():
             profileName=userName, activeStocks=actvStcks)
 
 def getTransactions(userId):
+    # get acvtive shares of the user along with the current price
+    import pandas
+    import numpy
+    qryTransactions = "select st.stock_symbol, st.stock_exchange, st. date, st.quantity, " +\
+                    "st.cost_per_unit,st.quantity*st.cost_per_unit as total_cost, " +\
+                    "tt.transaction_type FROM stockTransactions as st "+\
+                    " INNER JOIN " +\
+                    "TransactionTypes as tt ON "+\
+                    "st.transaction_type_id=tt.transaction_type_id" + \
+                    " WHERE st.userid = "+ str(userId)
+    # set up connections to the DB
+    conn = mysql.connector.Connect(host='localhost',user='root',\
+                        password='',database='Logbook')
+    transactionsDF = pandas.read_sql( qryTransactions, conn )
+    return transactionsDF
+
+def getActiveStocks(userId):
     # get acvtive shares of the user along with the current price
     import pandas
     import numpy
@@ -186,6 +205,34 @@ def newtrans():
             return render_template('transactions.html', \
                 form=form, profileName=userName)
 
+@app.route("/statement")
+def statement():
+    # fucntion to access the profile page of the user
+    if 'email' not in session:
+        return redirect(url_for('signin'))
+    # Check if the user is in our db
+    user = User.query.filter_by(email = session['email']).first()
+    dbRaw = \
+    MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
+    # check if the email-id is already taken
+    queryUserChk = " SELECT userid, name FROM Users WHERE email = " \
+    + "'" + session['email'] + "'"
+    dbRaw.query( queryUserChk )
+    userDetails = dbRaw.store_result().fetch_row( maxrows=0 )
+    # check if we have the email in our database of users.
+    if userDetails is None:
+        return redirect(url_for('signin'))
+    else:
+        userId = userDetails[0][0]
+        userName = userDetails[0][1]
+        # get number of active stocks (sell-buy>0), 
+        # prices of shares for the user
+        actvStcks = getActiveStocks(userId)
+        # to use it in jinja templates, we need to convert the DF
+        # into a list of dicts
+        actvStcks = actvStcks.T.to_dict().values()
+        return render_template('profile_layout.html', \
+            profileName=userName, activeStocks=actvStcks)
 
 @app.route("/signout")
 def signout(): 
