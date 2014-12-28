@@ -71,12 +71,13 @@ def profile():
         # prices of shares for the user
         actvStcks = getActiveStocks(userId)
         transStcks = getTransactions(userId)
-        print transStcks
         # to use it in jinja templates, we need to convert the DF
         # into a list of dicts
         actvStcks = actvStcks.T.to_dict().values()
+        transStcks = transStcks.T.to_dict().values()
         return render_template('profile_layout.html', \
-            profileName=userName, activeStocks=actvStcks)
+            profileName=userName, \
+            activeStocks=actvStcks, transctnStcks=transStcks)
 
 def getTransactions(userId):
     # get acvtive shares of the user along with the current price
@@ -88,11 +89,14 @@ def getTransactions(userId):
                     " INNER JOIN " +\
                     "TransactionTypes as tt ON "+\
                     "st.transaction_type_id=tt.transaction_type_id" + \
-                    " WHERE st.userid = "+ str(userId)
+                    " WHERE st.userid = "+ str(userId) + " limit 10;"
     # set up connections to the DB
     conn = mysql.connector.Connect(host='localhost',user='root',\
                         password='',database='Logbook')
     transactionsDF = pandas.read_sql( qryTransactions, conn )
+    # limit the total cost to 2 decimal places
+    transactionsDF['total_cost'] = \
+    transactionsDF['total_cost'].apply(lambda x: round(x, 2))
     return transactionsDF
 
 def getActiveStocks(userId):
