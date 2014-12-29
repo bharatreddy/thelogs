@@ -235,10 +235,54 @@ def summary():
         # to use it in jinja templates, we need to convert the DF
         # into a list of dicts
         actvStcks = actvStcks.T.to_dict().values()
+        smryTransactions = getProfitLoss(userId)
+        print smryTransactions
         return render_template('profile_layout.html', \
             profileName=userName, activeStocks=actvStcks)
 
-
+def getProfitLoss(userId):
+    # get acvtive shares of the user along with the current price
+    import pandas
+    import numpy
+    # set up connections to the DB
+    conn = mysql.connector.Connect(host='localhost',user='root',\
+                        password='',database='Logbook')
+    qrySellStocks = "SELECT stock_symbol,stock_exchange,"+\
+        "SUM(quantity) as quantity_sell, cost_per_unit as unit_price_sell, "+\
+        "SUM(quantity*cost_per_unit) as total_cost_sell"+\
+        " FROM stockTransactions INNER JOIN transactionTypes ON "+\
+        " transactionTypes.transaction_type_id"+\
+        "=stockTransactions.transaction_type_id " +\
+        "WHERE ("+ "userid = "+ str(userId)+\
+        " and transaction_type='SELL')"+\
+        "GROUP BY stock_symbol,stock_exchange;"
+    sellStocksDF = pandas.read_sql( qrySellStocks, conn )
+    qryBuyStocks = "SELECT stock_symbol,stock_exchange,"+\
+        "SUM(quantity) as quantity_buy, cost_per_unit as unit_price_buy, "+\
+        "SUM(quantity*cost_per_unit) as total_cost_buy"+\
+        " FROM stockTransactions INNER JOIN transactionTypes ON "+\
+        " transactionTypes.transaction_type_id"+\
+        "=stockTransactions.transaction_type_id " +\
+        "WHERE ("+ "userid = "+ str(userId)+\
+        " and transaction_type='BUY')"+\
+        "GROUP BY stock_symbol,stock_exchange;"
+    buyStocksDF = pandas.read_sql( qryBuyStocks, conn )
+    # we have a buy and sell dataset, now merge the two DFs
+    # and calculate profit/loss
+    prftStcksDF = pandas.merge( buyStocksDF, sellStocksDF,\
+     on=['stock_symbol','stock_exchange'] )
+    # now profit is calculated based on number of shares sold.
+    # Now calculating the profits is complicated, we could have 
+    # multiple transactions of buy and sell. so we'll calcualte the 
+    # buy price as total_buy_price multiplied by fraction of shares sold.
+    # Ofcourse, cost of shares sold is simpler.
+    prftStcksDF['profit'] = (prftStcksDF['total_cost_sell']*1.) \
+    - (prftStcksDF['quantity_sell']*1./prftStcksDF['quantity_buy'])*\
+    prftStcksDF['total_cost_buy'] 
+    # limit to 2 decimal places.
+    prftStcksDF['profit'] = \
+    prftStcksDF['profit'].apply(lambda x: round(x, 2))
+    return prftStcksDF
 
 @app.route("/signout")
 def signout(): 
