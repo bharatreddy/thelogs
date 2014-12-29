@@ -106,27 +106,64 @@ class FillStockPriceTable(object):
             # Now if we have None values in both BSE and NSE prices don't update
             if ( (currNSEPrice is None) and (currBSEPrice is None) ):
                 continue
-            try:
-                query = ("INSERT INTO StockPrices "
-                       " (stock_symbol, NSE_cost_per_unit, NSE_datetime, BSE_cost_per_unit, BSE_datetime) "
-                       " VALUES (%s, %s, %s, %s, %s) "
-                       " ON DUPLICATE KEY UPDATE "
-                       "   stock_symbol=VALUES(stock_symbol), "
-                       "   NSE_cost_per_unit=VALUES(NSE_cost_per_unit), "
-                       "   NSE_datetime=VALUES(NSE_datetime), "
-                       "   BSE_cost_per_unit=VALUES(BSE_cost_per_unit), "
-                       "   BSE_datetime=VALUES(BSE_datetime) "
-                       )
-                params = (
-                    stsym, 
-                    currNSEPrice, 
-                    currNSEDate, 
-                    currBSEPrice, 
-                    currBSEDate)
-                self.cursor.execute(query, params)
-                self.conn.commit()
-            except:
-                print "-------------------------INSERT FAILED-------------------------"
+            elif ( (currNSEPrice is None) and (currBSEPrice is not None) ):
+                try:
+                    query = ("INSERT INTO StockPrices "
+                           " (stock_symbol, BSE_cost_per_unit, BSE_datetime) "
+                           " VALUES (%s, %s, %s) "
+                           " ON DUPLICATE KEY UPDATE "
+                           "   stock_symbol=VALUES(stock_symbol), "
+                           "   BSE_cost_per_unit=VALUES(BSE_cost_per_unit), "
+                           "   BSE_datetime=VALUES(BSE_datetime) "
+                           )
+                    params = (
+                        stsym,
+                        currBSEPrice, 
+                        currBSEDate)
+                    self.cursor.execute(query, params)
+                    self.conn.commit()
+                except:
+                    print "-------------------------INSERT FAILED-------------------------"
+            elif ( (currNSEPrice is not None) and (currBSEPrice is None) ):
+                try:
+                    query = ("INSERT INTO StockPrices "
+                           " (stock_symbol, BSE_cost_per_unit, BSE_datetime) "
+                           " VALUES (%s, %s, %s) "
+                           " ON DUPLICATE KEY UPDATE "
+                           "   stock_symbol=VALUES(stock_symbol), "
+                           "   NSE_cost_per_unit=VALUES(NSE_cost_per_unit), "
+                           "   NSE_datetime=VALUES(NSE_datetime) "
+                           )
+                    params = (
+                        stsym,
+                        currNSEPrice, 
+                        currNSEDate)
+                    self.cursor.execute(query, params)
+                    self.conn.commit()
+                except:
+                    print "-------------------------INSERT FAILED-------------------------"
+            else:
+                try:
+                    query = ("INSERT INTO StockPrices "
+                           " (stock_symbol, NSE_cost_per_unit, NSE_datetime, BSE_cost_per_unit, BSE_datetime) "
+                           " VALUES (%s, %s, %s, %s, %s) "
+                           " ON DUPLICATE KEY UPDATE "
+                           "   stock_symbol=VALUES(stock_symbol), "
+                           "   NSE_cost_per_unit=VALUES(NSE_cost_per_unit), "
+                           "   NSE_datetime=VALUES(NSE_datetime), "
+                           "   BSE_cost_per_unit=VALUES(BSE_cost_per_unit), "
+                           "   BSE_datetime=VALUES(BSE_datetime) "
+                           )
+                    params = (
+                        stsym, 
+                        currNSEPrice, 
+                        currNSEDate, 
+                        currBSEPrice, 
+                        currBSEDate)
+                    self.cursor.execute(query, params)
+                    self.conn.commit()
+                except:
+                    print "-------------------------INSERT FAILED-------------------------"
 
     def active_stock_prices(self):
         import stockPrice
