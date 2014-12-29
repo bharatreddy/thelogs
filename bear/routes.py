@@ -236,9 +236,9 @@ def summary():
         # into a list of dicts
         actvStcks = actvStcks.T.to_dict().values()
         smryTransactions = getProfitLoss(userId)
-        print smryTransactions
-        return render_template('profile_layout.html', \
-            profileName=userName, activeStocks=actvStcks)
+        smryTransactions = smryTransactions.T.to_dict().values()
+        return render_template('summary.html', \
+            summaryTrans=smryTransactions)
 
 def getProfitLoss(userId):
     # get acvtive shares of the user along with the current price
