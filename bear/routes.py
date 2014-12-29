@@ -209,8 +209,8 @@ def newtrans():
             return render_template('transactions.html', \
                 form=form, profileName=userName)
 
-@app.route("/statement")
-def statement():
+@app.route("/summary")
+def summary():
     # fucntion to access the profile page of the user
     if 'email' not in session:
         return redirect(url_for('signin'))
@@ -237,6 +237,8 @@ def statement():
         actvStcks = actvStcks.T.to_dict().values()
         return render_template('profile_layout.html', \
             profileName=userName, activeStocks=actvStcks)
+
+
 
 @app.route("/signout")
 def signout(): 

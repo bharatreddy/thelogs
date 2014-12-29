@@ -134,6 +134,7 @@ class FillStockPriceTable(object):
         # the date string we get has the following format
         # 23 Dec 3:29pm
         dtFormat = "%d %b %I:%M%p"
+        dtFormat2 = "%I:%M%p"
         # loop through the symbols in the list and
         # fill current stock price into the table.
         for stsym in self.actvSymList:
@@ -144,12 +145,18 @@ class FillStockPriceTable(object):
                 currNSEPrice = float(currNSEPrice.replace(",", ""))
                 try:
                     # convert the datetime string to python datetime object
-                    currNSEDate = datetime.datetime.strptime(currNSEDate, dtFormat)
+                    if len(currNSEDate) < 10:
+                        currNSEDate = datetime.datetime.strptime(currNSEDate, dtFormat2)
+                    else:
+                        currNSEDate = datetime.datetime.strptime(currNSEDate, dtFormat)
                     # need to set the year as we dont get 
                     # the information from the string.
                     # get the current year
                     currYear = datetime.datetime.utcnow().year
-                    currNSEDate = currNSEDate.replace(year=2014)
+                    currMonth = datetime.datetime.utcnow().month
+                    currDay = datetime.datetime.utcnow().day
+                    currNSEDate = currNSEDate.replace(\
+                        year=currYear, month=currMonth, day=currDay)
                 except:
                     # if is fails get current time in india
                     currNSEDateUTC = datetime.datetime.now(timezone('UTC'))
@@ -160,12 +167,18 @@ class FillStockPriceTable(object):
                 (currBSEDate, currBSEPrice) = bseObj.get_stock_data()
                 currBSEPrice = float(currBSEPrice.replace(",", ""))
                 try:
-                    currBSEDate = datetime.datetime.strptime(currBSEDate, dtFormat)
+                    if len(currBSEDate) < 10:
+                        currBSEDate = datetime.datetime.strptime(currBSEDate, dtFormat2)
+                    else:
+                        currBSEDate = datetime.datetime.strptime(currBSEDate, dtFormat)
                     # need to set the year as we dont get 
                     # the information from the string.
                     # get the current year
                     currYear = datetime.datetime.utcnow().year
-                    currBSEDate = currBSEDate.replace(year=2014)
+                    currMonth = datetime.datetime.utcnow().month
+                    currDay = datetime.datetime.utcnow().day
+                    currBSEDate = currBSEDate.replace(\
+                        year=currYear, month=currMonth, day=currDay)
                 except:
                     # if is fails get current time in india
                     currBSEDateUTC = datetime.datetime.now(timezone('UTC'))
