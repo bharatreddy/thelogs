@@ -3,7 +3,9 @@ if __name__ == "__main__":
     import tweetStocks
     twts = tweetStocks.StockTweets()
     allStockNames = twts.get_stock_lists()
-    twts.get_stream_data(srchWords=allStockNames)
+    actvStockNames = twts.get_stock_trans_list()
+    print actvStockNames
+    twts.get_stream_data(srchWords=actvStockNames[0])
 
 class StockTweets(object):
     """
@@ -33,6 +35,18 @@ class StockTweets(object):
         conn = mysql.connector.Connect(host='localhost',user='root',\
                         password='',database='Logbook')
         qryStockNames = "SELECT stocksymbol, stockname FROM StockSymbols"
+        stockListDF = pandas.read_sql( qryStockNames, conn )
+        stockNames = stockListDF['stockname'].tolist()
+        return stockNames
+
+    def get_stock_trans_list(self):
+        # get a list of all the stocks in our database
+        import pandas
+        import mysql.connector
+        conn = mysql.connector.Connect(host='localhost',user='root',\
+                        password='',database='Logbook')
+        qryStockNames = "SELECT DISTINCT stockname FROM stockTransactions"+\
+        " INNER JOIN stockSymbols ON stock_symbol=stocksymbol;"
         stockListDF = pandas.read_sql( qryStockNames, conn )
         stockNames = stockListDF['stockname'].tolist()
         return stockNames
