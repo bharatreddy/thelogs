@@ -2,6 +2,8 @@ if __name__ == "__main__":
     import yhNews
     ynObj = yhNews.GetYahooNews()
     newsList = ynObj.get_news_url_list()
+    ynObj.get_news_articles(newsList)
+
 
 class GetYahooNews(object):
     """
@@ -44,3 +46,25 @@ class GetYahooNews(object):
             except:
                 continue
         return newsList
+
+    def get_news_articles(self, articleList):
+        # get the urls to the news items
+        import bs4
+        import urllib2
+        for al in articleList:
+            # get the full url of the page
+            fullNewsUrl = self.baseNewsUrl + al
+            # soupify
+            urlData = urllib2.urlopen(fullNewsUrl).read()
+            soup = bs4.BeautifulSoup(urlData)
+            # the text is located in div with class labelled "entry-content"
+            newsArtcleDiv = soup.findAll( \
+            attrs={'class': "entry-content"} )
+            # get all the paragraph tags in the div
+            newsArtclePTag =newsArtcleDiv[0].findAll('p', text=True)#[ n.findAll('p') for n in newsArtcleDiv ]
+            newsText = ''
+            for nn in newsArtclePTag:
+                newsText += nn.get_text()
+                newsText += ' '
+            print newsText
+            break
