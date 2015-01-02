@@ -77,7 +77,7 @@ class GetYahooNews(object):
             stockSyms, stockNames = self.get_stock_lists()
             stockData = stockSyms + stockNames
             # add some additional terms
-            stockData += ['shares', 'stocks', 'industry']
+            # stockData += ['shares', 'stocks', 'industry']
             if any(word in newsText for word in stockData):
                 rlvntArticles[fullNewsUrl] = newsText
             else:
