@@ -2,6 +2,7 @@ if __name__ == "__main__":
     import yhNews
     ynObj = yhNews.GetYahooNews()
     newsList = ynObj.get_news_url_list()
+    print newsList
     ynObj.get_news_articles(newsList)
 
 
