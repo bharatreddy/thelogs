@@ -1,8 +1,7 @@
 if __name__ == "__main__":
     import createDB
     dbo = createDB.DbUtils()
-    # dbo.create_main_tables()
-    dbo.create_innings_tables()
+    dbo.create_all_tables()
     dbo.close()
 
 class DbUtils(object):
@@ -17,7 +16,7 @@ class DbUtils(object):
                                 password='',database='Logbook')
         self.cursor = self.conn.cursor()
 
-    def create_main_tables(self):
+    def create_all_tables(self):
         import mysql.connector
         # create the StockSymbols table
         stsymStr = """
@@ -43,7 +42,7 @@ class DbUtils(object):
         # create the Users table
         stUsrStr = """
                     CREATE TABLE Users(
-                        userid INT NOT NULL,
+                        userid INT NOT NULL AUTO_INCREMENT,
                         name VARCHAR(100) NOT NULL,
                         email VARCHAR(120) NOT NULL UNIQUE,
                         pwdhash VARCHAR(54) NOT NULL,
@@ -63,6 +62,7 @@ class DbUtils(object):
         # create the stockTransactions table
         ststtrnStr = """
                     CREATE TABLE stockTransactions(
+                        transaction_id INT NOT NULL AUTO_INCREMENT,
                         userid INT NOT NULL,
                         stock_symbol VARCHAR(100) NOT NULL,
                         date DATETIME NOT NULL,
@@ -71,6 +71,7 @@ class DbUtils(object):
                         quantity_buy INT NOT NULL,
                         cost_per_unit FLOAT NOT NULL,
                         simulated VARCHAR(10) NULL,
+                        PRIMARY KEY (transaction_id),
                         FOREIGN KEY (userid) REFERENCES Users(userid),
                         FOREIGN KEY (stock_symbol) REFERENCES StockSymbols(stocksymbol),
                         FOREIGN KEY (transaction_type_id) REFERENCES TransactionTypes(transaction_type_id)
