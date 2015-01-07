@@ -28,110 +28,55 @@ class DbUtils(object):
                         )
                     """
         self.cursor.execute(stsymStr)
-
-        # create the Match table
-        mtchStr = """
-                    CREATE TABLE Game(
-                        Id INT NOT NULL,
-                        MatchDate DATETIME NOT NULL,
-                        Type VARCHAR(50) NOT NULL,
-                        Venue VARCHAR(100) NULL,
-                        Competition VARCHAR(100),
-                        Overs FLOAT,
-                        PRIMARY KEY (Id)
+        # create the StockPrices table
+        stPrcStr = """
+                    CREATE TABLE StockPrices(
+                        stock_symbol VARCHAR(100) NOT NULL,
+                        NSE_cost_per_unit FLOAT NULL,
+                        NSE_datetime DATETIME NULL,
+                        BSE_cost_per_unit FLOAT NULL,
+                        BSE_datetime DATETIME NULL,
+                        FOREIGN KEY (stock_symbol) REFERENCES StockSymbols(stocksymbol)
                         )
                     """
-        self.cursor.execute(mtchStr)
-        # create the Toss table
-        tossStr = """
-                    CREATE TABLE Toss(
-                        MatchId INT NOT NULL,
-                        Winner VARCHAR(100) NOT NULL,
-                        Decision VARCHAR(50) NOT NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
+        self.cursor.execute(stPrcStr)
+        # create the Users table
+        stUsrStr = """
+                    CREATE TABLE Users(
+                        userid INT NOT NULL,
+                        name VARCHAR(100) NOT NULL,
+                        email VARCHAR(120) NOT NULL UNIQUE,
+                        pwdhash VARCHAR(54) NOT NULL,
+                        PRIMARY KEY (userid)
                         )
                     """
-        self.cursor.execute(tossStr)
-        # create the Teams table
-        teamsStr = """
-                    CREATE TABLE Teams(
-                        MatchId INT NOT NULL,
-                        Team1 VARCHAR(100) NOT NULL,
-                        Team2 VARCHAR(100) NOT NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
+        self.cursor.execute(stUsrStr)
+        # create the TransactionTypes table
+        sttrtypStr = """
+                    CREATE TABLE TransactionTypes(
+                        transaction_type_id INT NOT NULL,
+                        transaction_type VARCHAR(10) NOT NULL,
+                        PRIMARY KEY (transaction_type_id)
                         )
                     """
-        self.cursor.execute(teamsStr)
-        # create the Umpires table
-        umpiresStr = """
-                    CREATE TABLE Umpires(
-                        MatchId INT NOT NULL,
-                        Umpire1 VARCHAR(100) NOT NULL,
-                        Umpire2 VARCHAR(100) NOT NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
+        self.cursor.execute(sttrtypStr)
+        # create the stockTransactions table
+        ststtrnStr = """
+                    CREATE TABLE stockTransactions(
+                        userid INT NOT NULL,
+                        stock_symbol VARCHAR(100) NOT NULL,
+                        date DATETIME NOT NULL,
+                        transaction_type_id INT NOT NULL,
+                        stock_exchange VARCHAR(20) NOT NULL,
+                        quantity_buy INT NOT NULL,
+                        cost_per_unit FLOAT NOT NULL,
+                        simulated VARCHAR(10) NULL,
+                        FOREIGN KEY (userid) REFERENCES Users(userid),
+                        FOREIGN KEY (stock_symbol) REFERENCES StockSymbols(stocksymbol),
+                        FOREIGN KEY (transaction_type_id) REFERENCES TransactionTypes(transaction_type_id)
                         )
                     """
-        self.cursor.execute(umpiresStr)
-        # create the PlayerOfMatch table
-        playerOfMatchStr = """
-                    CREATE TABLE PlayerOfMatch(
-                        MatchId INT NOT NULL,
-                        Player VARCHAR(100) NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
-                        )
-                    """
-        self.cursor.execute(playerOfMatchStr)
-        # create the Outcome table
-        outComeStr = """
-                    CREATE TABLE Outcome(
-                        MatchId INT NOT NULL,
-                        Winner VARCHAR(100) NULL,
-                        Innings INT NULL,
-                        Runs INT NULL,
-                        Wickets INT NULL,
-                        Result VARCHAR(50) NULL,
-                        Eliminator VARCHAR(100) NULL,
-                        Method VARCHAR(50) NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
-                        )
-                    """
-        self.cursor.execute(outComeStr)
-        self.conn.commit()
-
-    def create_innings_tables(self):
-        import mysql.connector
-        # create the Innings table
-        innStr = """
-                    CREATE TABLE Innings(
-                        MatchId INT NOT NULL,
-                        InningsNum INT NOT NULL,
-                        Team VARCHAR(50) NOT NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
-                        )
-                    """
-        self.cursor.execute(innStr)
-        # create the Deliveries table 
-        delStr = """
-                    CREATE TABLE Deliveries(
-                        MatchId INT NOT NULL,
-                        InnNum INT NOT NULL,
-                        Over FLOAT NULL,
-                        Batsman VARCHAR(100) NULL,
-                        NonStriker VARCHAR(100) NULL,
-                        Bowler VARCHAR(100) NULL,
-                        BatsmanRuns INT NULL,
-                        ExtraRuns INT NULL,
-                        NonBoundary INT NULL,
-                        Substitution VARCHAR(200) NULL,
-                        Wicket VARCHAR(10) NULL,
-                        WicketFielder VARCHAR(100) NULL,
-                        WicketKind VARCHAR(100) NULL,
-                        WicketPlayerOut VARCHAR(100) NULL,
-                        Extra VARCHAR(100) NULL,
-                        FOREIGN KEY (MatchId) REFERENCES Game(Id)
-                        )
-                    """
-        self.cursor.execute(delStr)
+        self.cursor.execute(ststtrnStr)
         self.conn.commit()
 
     def close(self):
