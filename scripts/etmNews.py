@@ -76,10 +76,9 @@ class GetEcTimesNews(object):
             currText = currUrlTextDiv[0].get_text()
             if any(word in currText for word in stockData):
                 rlvntArticles[currUrl] = currText
-                print "found-->", currUrl
             else:
-                print "None-->", currUrl
                 continue
+        return rlvntArticles
 
     def get_stock_lists(self):
         # get a list of all the stocks in our database
@@ -104,5 +103,3 @@ class GetEcTimesNews(object):
         stockListDF = pandas.read_sql( qryStockNames, conn )
         stockNames = stockListDF['stockname'].tolist()
         return stockNames
-
-
