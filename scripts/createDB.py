@@ -45,7 +45,7 @@ class DbUtils(object):
                         userid INT NOT NULL AUTO_INCREMENT,
                         name VARCHAR(100) NOT NULL,
                         email VARCHAR(120) NOT NULL UNIQUE,
-                        pwdhash VARCHAR(54) NOT NULL,
+                        pwdhash VARCHAR(100) NOT NULL,
                         PRIMARY KEY (userid)
                         )
                     """
@@ -68,7 +68,7 @@ class DbUtils(object):
                         date DATETIME NOT NULL,
                         transaction_type_id INT NOT NULL,
                         stock_exchange VARCHAR(20) NOT NULL,
-                        quantity_buy INT NOT NULL,
+                        quantity INT NOT NULL,
                         cost_per_unit FLOAT NOT NULL,
                         simulated VARCHAR(10) NULL,
                         PRIMARY KEY (transaction_id),

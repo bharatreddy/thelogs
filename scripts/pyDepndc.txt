@@ -3,4 +3,5 @@ sudo pip install flask
 sudo pip install flask-security flask-sqlalchemy
 sudo pip install --allow-external mysql-connector-python mysql-connector-python
 sudo pip install pymongo
-sudo pip install beautifulsoup4 
+sudo pip install beautifulsoup4
+sudo pip install mysql-python 

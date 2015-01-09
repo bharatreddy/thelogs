@@ -69,11 +69,14 @@ def profile():
         userName = userDetails[0][1]
         # get number of active stocks (sell-buy>0), 
         # prices of shares for the user
-        actvStcks = getActiveStocks(userId)
-        transStcks = getTransactions(userId)
         # to use it in jinja templates, we need to convert the DF
         # into a list of dicts
-        actvStcks = actvStcks.T.to_dict().values()
+        actvStcks = getActiveStocks(userId)
+        if actvStcks is not None:
+            actvStcks = actvStcks.T.to_dict().values()
+        else:
+            actvStcks = []
+        transStcks = getTransactions(userId)
         transStcks = transStcks.T.to_dict().values()
         return render_template('profile_layout.html', \
             profileName=userName, \
@@ -120,31 +123,42 @@ def getActiveStocks(userId):
         stckList += "'"+stsym+"'"
         if nst < len(actvStockList)-1:
             stckList += ", "
-    qryCurrPrice = "SELECT * FROM StockPrices WHERE stock_symbol IN (" \
-        + stckList + ")"
-    actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
-    # merge the DFs
-    actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
-    # Before we do further calculations, replace all None types to zero and 
-    # then get them back to None types. We get None's when the stock price update
-    # fails.
-    actvStcksDF = actvStcksDF.fillna(0)
-    # Now calculate the revenue and other values based on the stock exchange
-    actvStcksDF['revenue'] = actvStcksDF.apply( \
-        lambda row: row['active_num']*row['NSE_cost_per_unit'] \
-        if row['stock_exchange'] == 'NSE' \
-        else row['active_num']*row['BSE_cost_per_unit'], axis=1)
-    actvStcksDF['current_price'] = actvStcksDF.apply( \
-        lambda row: row['NSE_cost_per_unit'] \
-        if row['stock_exchange'] == 'NSE' \
-        else row['BSE_cost_per_unit'], axis=1)
-    actvStcksDF['price_updated'] = actvStcksDF.apply( \
-        lambda row: row['NSE_datetime'] \
-        if row['stock_exchange'] == 'NSE' \
-        else row['BSE_datetime'], axis=1)
-    # if there are any zeros, print an error message
-    actvStcksDF[actvStcksDF['revenue'] == 0] = "System not updating"
-    return actvStcksDF
+    if stckList != "":
+        qryCurrPrice = "SELECT * FROM StockPrices WHERE stock_symbol IN (" \
+            + stckList + ")"
+        actvPrcDF = pandas.read_sql( qryCurrPrice, conn )
+        # return None is the DF is not populated. IT means we dont have 
+        # the script updating prices running for some reason
+        if actvPrcDF['stock_symbol'].count() == 0:
+            return None
+        # merge the DFs
+        actvStcksDF = pandas.merge( numStocksDF, actvPrcDF, on='stock_symbol' )
+        # Before we do further calculations, replace all None types to zero and 
+        # then get them back to None types. We get None's when the stock price update
+        # fails.
+        print "---------------------------"
+        print userId
+        actvStcksDF = actvStcksDF.fillna(0)
+        print actvPrcDF['stock_symbol'].count()
+        print "---------------------------"
+        # Now calculate the revenue and other values based on the stock exchange
+        actvStcksDF['revenue'] = actvStcksDF.apply( \
+            lambda row: row['active_num']*row['NSE_cost_per_unit'] \
+            if row['stock_exchange'] == 'NSE' \
+            else row['active_num']*row['BSE_cost_per_unit'], axis=1)
+        actvStcksDF['current_price'] = actvStcksDF.apply( \
+            lambda row: row['NSE_cost_per_unit'] \
+            if row['stock_exchange'] == 'NSE' \
+            else row['BSE_cost_per_unit'], axis=1)
+        actvStcksDF['price_updated'] = actvStcksDF.apply( \
+            lambda row: row['NSE_datetime'] \
+            if row['stock_exchange'] == 'NSE' \
+            else row['BSE_datetime'], axis=1)
+        # if there are any zeros, print an error message
+        actvStcksDF[actvStcksDF['revenue'] == 0] = "System not updating"
+        return actvStcksDF
+    else:
+        return None
 
 @app.route("/newtrans", methods=['GET', 'POST'])
 def newtrans():
@@ -234,7 +248,10 @@ def summary():
         actvStcks = getActiveStocks(userId)
         # to use it in jinja templates, we need to convert the DF
         # into a list of dicts
-        actvStcks = actvStcks.T.to_dict().values()
+        if actvStcks is not None:
+            actvStcks = actvStcks.T.to_dict().values()
+        else:
+            actvStcks = None
         smryTransactions = getProfitLoss(userId)
         smryTransactions = smryTransactions.T.to_dict().values()
         return render_template('summary.html', \
