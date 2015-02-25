@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
 class GetEcTimesNews(object):
     """
-    A class to get the news from yahoo site.
+    A class to get the news from economic times.
 
     We'll get news from those articles where there was
     a mention of one of the stocks listed in our db.
