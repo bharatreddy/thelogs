@@ -29,19 +29,21 @@ class GetYahooNews(object):
         import bs4
         import urllib2
         # get the page url where news items are listed
-        stockNewsUrl = self.baseNewsUrl + 'news/category-stocks/'
+        stockNewsUrl = self.baseNewsUrl + 'news/'#category-stocks/
         # soupify
         urlData = urllib2.urlopen(stockNewsUrl).read()
         soup = bs4.BeautifulSoup(urlData)
         # the news items are in the li tags, first get the
         # ul class associated with the news items.
-        newsListUlTag = soup.findAll( \
-            attrs={'class': "yom-mod yom-top-story"} )
-        newsListLiTags = newsListUlTag[0].findAll('li')
+        newsListTag = soup.findAll( \
+            attrs={'class': "list-story"} )
+        # Now we have a list of objects, work with them
+        # individually and get the links
+        newsListh4Tags = [ nh.findAll('h4') for nh in newsListTag ]
         newsList = []
-        for nl in newsListLiTags:
+        for nl in newsListh4Tags:
             try:
-                currNL = nl.findAll('a')
+                currNL = nl[0].findAll('a')
                 newsList.append( currNL[0]['href'] )
             except:
                 continue
