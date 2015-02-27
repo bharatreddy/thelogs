@@ -61,7 +61,7 @@ class DbUtils(object):
         self.cursor.execute(sttrtypStr)
         # create the stockTransactions table
         ststtrnStr = """
-                    CREATE TABLE stockTransactions(
+                    CREATE TABLE StockTransactions(
                         transaction_id INT NOT NULL AUTO_INCREMENT,
                         userid INT NOT NULL,
                         stock_symbol VARCHAR(100) NOT NULL,

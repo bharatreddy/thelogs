@@ -59,30 +59,33 @@ class GetYahooNews(object):
             # get the full url of the page
             fullNewsUrl = self.baseNewsUrl + al
             # soupify
-            urlData = urllib2.urlopen(fullNewsUrl).read()
-            soup = bs4.BeautifulSoup(urlData)
-            # the text is located in div with class labelled "entry-content"
-            newsArtcleDiv = soup.findAll( \
-            attrs={'id': "mediaarticlebody"} )
-            # check for any content
-            if len(newsArtcleDiv) == 0:
-                continue
-            # get all the paragraph tags in the div
-            newsArtclePTag =newsArtcleDiv[0].findAll('p', text=True)
-            newsText = ''
-            for nn in newsArtclePTag:
-                newsText += nn.get_text()
-                newsText += ' '
-            # check if the any stock names/symbols
-            # are found in the string.
-            # first get the list of stocknames and symbols
-            stockSyms, stockNames = self.get_stock_lists()
-            stockData = stockSyms + stockNames
-            # add some additional terms
-            # stockData += ['shares', 'stocks', 'industry']
-            if any(word in newsText for word in stockData):
-                rlvntArticles[fullNewsUrl] = newsText
-            else:
+            try:
+                urlData = urllib2.urlopen(fullNewsUrl).read()
+                soup = bs4.BeautifulSoup(urlData)
+                # the text is located in div with class labelled "entry-content"
+                newsArtcleDiv = soup.findAll( \
+                attrs={'id': "mediaarticlebody"} )
+                # check for any content
+                if len(newsArtcleDiv) == 0:
+                    continue
+                # get all the paragraph tags in the div
+                newsArtclePTag =newsArtcleDiv[0].findAll('p', text=True)
+                newsText = ''
+                for nn in newsArtclePTag:
+                    newsText += nn.get_text()
+                    newsText += ' '
+                # check if the any stock names/symbols
+                # are found in the string.
+                # first get the list of stocknames and symbols
+                stockSyms, stockNames = self.get_stock_lists()
+                stockData = stockSyms + stockNames
+                # add some additional terms
+                # stockData += ['shares', 'stocks', 'industry']
+                if any(word in newsText for word in stockData):
+                    rlvntArticles[fullNewsUrl] = newsText
+                else:
+                    continue
+            except:
                 continue
         return rlvntArticles
 

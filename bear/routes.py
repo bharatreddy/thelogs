@@ -88,7 +88,7 @@ def getTransactions(userId):
     import numpy
     qryTransactions = "select st.stock_symbol, st.stock_exchange, st. date, st.quantity, " +\
                     "st.cost_per_unit,st.quantity*st.cost_per_unit as total_cost, " +\
-                    "tt.transaction_type FROM stockTransactions as st "+\
+                    "tt.transaction_type FROM StockTransactions as st "+\
                     " INNER JOIN " +\
                     "TransactionTypes as tt ON "+\
                     "st.transaction_type_id=tt.transaction_type_id" + \
@@ -108,7 +108,7 @@ def getActiveStocks(userId):
     import numpy
     qryNumStocks = "SELECT stock_symbol,stock_exchange,"+\
         "sum(quantity*(case when transaction_type_id=1 then 1 else -1 end)) as active_num"+\
-        " FROM stockTransactions WHERE "+ "userid = "+ str(userId)+\
+        " FROM StockTransactions WHERE "+ "userid = "+ str(userId)+\
         " GROUP BY stock_symbol, stock_exchange;"
     # set up connections to the DB
     conn = mysql.connector.Connect(host='localhost',user='root',\
@@ -267,9 +267,9 @@ def getProfitLoss(userId):
     qrySellStocks = "SELECT stock_symbol,stock_exchange,"+\
         "SUM(quantity) as quantity_sell, cost_per_unit as unit_price_sell, "+\
         "SUM(quantity*cost_per_unit) as total_cost_sell"+\
-        " FROM stockTransactions INNER JOIN transactionTypes ON "+\
-        " transactionTypes.transaction_type_id"+\
-        "=stockTransactions.transaction_type_id " +\
+        " FROM StockTransactions INNER JOIN TransactionTypes ON "+\
+        " TransactionTypes.transaction_type_id"+\
+        "=StockTransactions.transaction_type_id " +\
         "WHERE ("+ "userid = "+ str(userId)+\
         " and transaction_type='SELL')"+\
         "GROUP BY stock_symbol,stock_exchange;"
@@ -277,9 +277,9 @@ def getProfitLoss(userId):
     qryBuyStocks = "SELECT stock_symbol,stock_exchange,"+\
         "SUM(quantity) as quantity_buy, cost_per_unit as unit_price_buy, "+\
         "SUM(quantity*cost_per_unit) as total_cost_buy"+\
-        " FROM stockTransactions INNER JOIN transactionTypes ON "+\
-        " transactionTypes.transaction_type_id"+\
-        "=stockTransactions.transaction_type_id " +\
+        " FROM StockTransactions INNER JOIN TransactionTypes ON "+\
+        " TransactionTypes.transaction_type_id"+\
+        "=StockTransactions.transaction_type_id " +\
         "WHERE ("+ "userid = "+ str(userId)+\
         " and transaction_type='BUY')"+\
         "GROUP BY stock_symbol,stock_exchange;"
