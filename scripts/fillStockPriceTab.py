@@ -29,7 +29,7 @@ class FillStockPriceTable(object):
         # get a list of active stocks
         qrySyms = ("""
             SELECT DISTINCT stock_symbol
-            FROM stockTransactions
+            FROM StockTransactions
             """)
         self.cursor.execute(qrySyms)
         self.actvSymList = [s[0] for s in self.cursor]

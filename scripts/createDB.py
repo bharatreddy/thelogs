@@ -30,7 +30,7 @@ class DbUtils(object):
         # create the StockPrices table
         stPrcStr = """
                     CREATE TABLE StockPrices(
-                        stock_symbol VARCHAR(100) NOT NULL,
+                        stock_symbol VARCHAR(100) NOT NULL UNIQUE,
                         NSE_cost_per_unit FLOAT NULL,
                         NSE_datetime DATETIME NULL,
                         BSE_cost_per_unit FLOAT NULL,

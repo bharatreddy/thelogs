@@ -155,7 +155,7 @@ def getActiveStocks(userId):
             if row['stock_exchange'] == 'NSE' \
             else row['BSE_datetime'], axis=1)
         # if there are any zeros, print an error message
-        actvStcksDF[actvStcksDF['revenue'] == 0] = "System not updating"
+        actvStcksDF[actvStcksDF['revenue'] == 0] = None#"System not updating"
         return actvStcksDF
     else:
         return None
