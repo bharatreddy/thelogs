@@ -5,7 +5,7 @@ if __name__ == "__main__":
     newsUrl = ''
     if 'News' in urlDict:
         newsUrl = urlDict['News']
-    etObj.get_url_data(newsUrl)
+    artDict = etObj.get_url_data(newsUrl)
 
 
 class GetEcTimesNews(object):
@@ -65,18 +65,26 @@ class GetEcTimesNews(object):
         # have a dict of relavant articles
         rlvntArticles = {}
         for ud in urlListDiv:
-            udTag = ud.findAll('a')
-            currUrl = self.baseNewsUrl + udTag[0]['href']
-            # soupify the current url
-            currUrlData = urllib2.urlopen(currUrl).read()
-            currSoup = bs4.BeautifulSoup(currUrlData)
-            # get the actual url of the news website
-            currUrlTextDiv = currSoup.findAll( \
-                attrs={'class': "artText"} )
-            currText = currUrlTextDiv[0].get_text()
-            if any(word in currText for word in stockData):
-                rlvntArticles[currUrl] = currText
-            else:
+            try:
+                udTag = ud.findAll('a')
+                currUrl = self.baseNewsUrl + udTag[0]['href']
+                # soupify the current url
+                currUrlData = urllib2.urlopen(currUrl).read()
+                currSoup = bs4.BeautifulSoup(currUrlData)
+                # get the actual url of the news website
+                currUrlTextDiv = currSoup.findAll( \
+                    attrs={'class': "artText"} )
+                currTime = str(currSoup.find( \
+                    attrs={'class': "byline"} ).get_text())
+                currText = currUrlTextDiv[0].get_text()
+                if any(word in currText for word in stockData):
+                    rlvntArticles[currUrl] = {}
+                    rlvntArticles[currUrl]['text'] = currText
+                    rlvntArticles[currUrl]['date'] = currTime
+                else:
+                    continue
+            except:
+                print "missed curr article"
                 continue
         return rlvntArticles
 

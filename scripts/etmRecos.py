@@ -3,7 +3,6 @@ if __name__ == "__main__":
     etObj = etmRecos.GetEcTimesRecos()
     recosBaseUrl = etObj.get_recos_baseurl()
     artDict = etObj.get_articles(recosBaseUrl)
-    print artDict
 
 
 class GetEcTimesRecos(object):
@@ -56,7 +55,7 @@ class GetEcTimesRecos(object):
         if recosBaseUrl is None:
             print "URL is None"
             return {}
-        # soupify 
+        # soupify
         urlData = urllib2.urlopen(recosBaseUrl).read()
         soup = bs4.BeautifulSoup(urlData)
         # get the actual urls for articles, they are under class eachStory
