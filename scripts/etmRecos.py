@@ -2,7 +2,7 @@ if __name__ == "__main__":
     import etmRecos
     etObj = etmRecos.GetEcTimesRecos()
     recosBaseUrl = etObj.get_recos_baseurl()
-    print recosBaseUrl
+    urlList = etObj.get_article_urls(recosBaseUrl)
     # newsUrl = ''
     # if 'News' in urlDict:
     #     newsUrl = urlDict['News']
@@ -29,7 +29,7 @@ class GetEcTimesRecos(object):
         'http://economictimes.indiatimes.com/'
 
     def get_recos_baseurl(self):
-        # get the urls to different menu items
+        # get the base url of the recommendations page
         import bs4
         import urllib2
         # get the url with all the links like News, Recos etc
@@ -48,4 +48,25 @@ class GetEcTimesRecos(object):
             if ("Recos" in etu['href']) or ("recos" in etu['href']):
                 return self.baseNewsUrl + etu['href']
         # If url is not found
+        print "Base URL not found"
         return None
+
+    def get_article_urls(self, recosBaseUrl):
+        # get the urls of the recos
+        import bs4
+        import urllib2
+        # check if the url is None, if so return empty list
+        if recosBaseUrl is None:
+            print "URL is None"
+            return []
+        # soupify 
+        urlData = urllib2.urlopen(recosBaseUrl).read()
+        soup = bs4.BeautifulSoup(urlData)
+        # get the actual urls for articles, they are under class eachStory
+        etUrlIdTag = soup.findAll( \
+            attrs={'class': "eachStory"} )
+        etUrlTag = etUrlIdTag[0].findAll('a')
+        urlList = []
+        for etu in etUrlTag:
+            urlList.append( self.baseNewsUrl + etu['href'] )
+        return urlList
