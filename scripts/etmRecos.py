@@ -2,11 +2,8 @@ if __name__ == "__main__":
     import etmRecos
     etObj = etmRecos.GetEcTimesRecos()
     recosBaseUrl = etObj.get_recos_baseurl()
-    urlList = etObj.get_article_urls(recosBaseUrl)
-    # newsUrl = ''
-    # if 'News' in urlDict:
-    #     newsUrl = urlDict['News']
-    # etObj.get_url_data(newsUrl)
+    artDict = etObj.get_articles(recosBaseUrl)
+    print artDict
 
 
 class GetEcTimesRecos(object):
@@ -51,22 +48,31 @@ class GetEcTimesRecos(object):
         print "Base URL not found"
         return None
 
-    def get_article_urls(self, recosBaseUrl):
-        # get the urls of the recos
+    def get_articles(self, recosBaseUrl):
+        # get the details of the recos
         import bs4
         import urllib2
-        # check if the url is None, if so return empty list
+        # check if the url is None, if so return empty dict
         if recosBaseUrl is None:
             print "URL is None"
-            return []
+            return {}
         # soupify 
         urlData = urllib2.urlopen(recosBaseUrl).read()
         soup = bs4.BeautifulSoup(urlData)
         # get the actual urls for articles, they are under class eachStory
         etUrlIdTag = soup.findAll( \
             attrs={'class': "eachStory"} )
-        etUrlTag = etUrlIdTag[0].findAll('a')
-        urlList = []
-        for etu in etUrlTag:
-            urlList.append( self.baseNewsUrl + etu['href'] )
-        return urlList
+        urlDict = {}
+        for etu in etUrlIdTag:
+            try:
+                currArtUrl = etu.find('a')['href']
+                currArtTime = str(etu.find('time').string)
+                currArtText = etu.find('a').get_text()
+                # store data in dict
+                urlDict[currArtUrl] = {}
+                urlDict[currArtUrl]['date'] = currArtTime
+                urlDict[currArtUrl]['text'] = currArtText
+            except:
+                print "curr article update failed"
+                continue
+        return urlDict
