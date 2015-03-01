@@ -4,7 +4,6 @@ if __name__ == "__main__":
     ynObj = yhNews.GetYahooNews()
     newsList = ynObj.get_news_url_list()
     artDict = ynObj.get_news_articles(newsList)
-    print artDict
     mnObj = mongoLib.MongoUtils()
     mnObj.insert_news(artDict)
     mnObj.close()
