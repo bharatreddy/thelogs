@@ -1,8 +1,13 @@
 if __name__ == "__main__":
     import yhNews
+    import mongoLib
     ynObj = yhNews.GetYahooNews()
     newsList = ynObj.get_news_url_list()
-    a = ynObj.get_news_articles(newsList)
+    artDict = ynObj.get_news_articles(newsList)
+    print artDict
+    mnObj = mongoLib.MongoUtils()
+    mnObj.insert_news(artDict)
+    mnObj.close()
 
 
 class GetYahooNews(object):

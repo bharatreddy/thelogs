@@ -1,8 +1,12 @@
 if __name__ == "__main__":
     import etmRecos
+    import mongoLib
     etObj = etmRecos.GetEcTimesRecos()
     recosBaseUrl = etObj.get_recos_baseurl()
     artDict = etObj.get_articles(recosBaseUrl)
+    mnObj = mongoLib.MongoUtils()
+    mnObj.insert_recos(artDict)
+    mnObj.close()
 
 
 class GetEcTimesRecos(object):

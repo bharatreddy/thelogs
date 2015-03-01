@@ -1,8 +1,3 @@
-if __name__ == "__main__":
-    import mongoLib
-    mnObj = mongoLib.MongoUtils()
-    mnObj.insert_news()
-
 class MongoUtils(object):
     """
     A class to store/create and retrieve data 
@@ -12,9 +7,9 @@ class MongoUtils(object):
     def __init__(self):
         import pymongo
         # set up connections to Mongo
-        conn = pymongo.MongoClient()
+        self.conn = pymongo.MongoClient()
         # Conect to the database and collections
-        self.db = conn['LogBook']
+        self.db = self.conn['LogBook']
         self.newsColl = self.db['News']
         self.recosColl = self.db['Recos']
 
@@ -28,5 +23,22 @@ class MongoUtils(object):
             # or key here, so that we'll avoid 
             # duplicate newsarticle
             currDict['_id'] = nd
-            self.newsColl.update(currDict, upsert=True)
-            
+            # self.newsColl.update( {'id':nd}, currDict, True )
+            self.newsColl.save(currDict)
+
+    def insert_recos(self, recosDict):
+        # insert news items into the db
+        # loop through the dict and insert
+        # the news items
+        for nd in recosDict.keys():
+            currDict = recosDict[nd]
+            # We'll have _id as the url to the news
+            # or key here, so that we'll avoid 
+            # duplicate newsarticle
+            currDict['_id'] = nd
+            # self.recosColl.update( {'id':nd}, currDict, upsert=False )
+            self.recosColl.save(currDict)
+
+    def close(self):
+        # close connections to mongodb
+        self.conn.close()

@@ -1,11 +1,15 @@
 if __name__ == "__main__":
     import etmNews
+    import mongoLib
     etObj = etmNews.GetEcTimesNews()
     urlDict = etObj.get_urls()
     newsUrl = ''
     if 'News' in urlDict:
         newsUrl = urlDict['News']
     artDict = etObj.get_url_data(newsUrl)
+    mnObj = mongoLib.MongoUtils()
+    mnObj.insert_news(artDict)
+    mnObj.close()
 
 
 class GetEcTimesNews(object):
