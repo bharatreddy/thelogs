@@ -2,7 +2,7 @@ if __name__ == "__main__":
     import yhNews
     ynObj = yhNews.GetYahooNews()
     newsList = ynObj.get_news_url_list()
-    ynObj.get_news_articles(newsList)
+    a = ynObj.get_news_articles(newsList)
 
 
 class GetYahooNews(object):
@@ -54,6 +54,7 @@ class GetYahooNews(object):
         import bs4
         import urllib2
         import re
+        import datetime
         rlvntArticles = {}
         for al in articleList:
             # get the full url of the page
@@ -70,6 +71,19 @@ class GetYahooNews(object):
                     continue
                 # get all the paragraph tags in the div
                 newsArtclePTag =newsArtcleDiv[0].findAll('p', text=True)
+                try:
+                    timeTag = soup.findAll( \
+                    attrs={'class': 'byline'} )
+                    currTimeStr = timeTag[0].find('abbr', text=True)['title']
+                    # remove unnecessary chars from datestr
+                    currTimeStr = currTimeStr.replace( "T", "-" )
+                    currTimeStr = currTimeStr.replace( "Z", "" )
+                    dtFmt = '%Y-%m-%d-%H:%M:%S'
+                    currTime = datetime.datetime.\
+                            strptime(currTimeStr,dtFmt)
+                except:
+                    print "couldn't retrieve date, using today's date"
+                    currTime = datetime.date.today()
                 newsText = ''
                 for nn in newsArtclePTag:
                     newsText += nn.get_text()
@@ -82,10 +96,16 @@ class GetYahooNews(object):
                 # add some additional terms
                 # stockData += ['shares', 'stocks', 'industry']
                 if any(word in newsText for word in stockData):
-                    rlvntArticles[fullNewsUrl] = newsText
+                    rlvntArticles[fullNewsUrl] = {}
+                    rlvntArticles[fullNewsUrl]['text'] = newsText
+                    # get date from current obj, its not simple 
+                    # to get datetime from python datetime obj
+                    rlvntArticles[fullNewsUrl]['date'] = currTime
+                    rlvntArticles[fullNewsUrl]['source'] = "Yahoo News"
                 else:
                     continue
             except:
+                print "couldn't get article text!"
                 continue
         return rlvntArticles
 

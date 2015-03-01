@@ -51,6 +51,7 @@ class GetEcTimesRecos(object):
         # get the details of the recos
         import bs4
         import urllib2
+        import datetime
         # check if the url is None, if so return empty dict
         if recosBaseUrl is None:
             print "URL is None"
@@ -65,12 +66,22 @@ class GetEcTimesRecos(object):
         for etu in etUrlIdTag:
             try:
                 currArtUrl = etu.find('a')['href']
-                currArtTime = str(etu.find('time').string)
+                try:
+                    currArtTimeStr = str(etu.find('time').string)
+                    dtFmt = '%d %b %Y, %H:%M %p IST'
+                    currTime = datetime.datetime.\
+                                        strptime(currArtTimeStr,dtFmt)
+                except:
+                    # get today's date if we are not able to convert to
+                    # datetime object.
+                    print "couldn't retrieve date, using today's date"
+                    currTime = datetime.date.today()
                 currArtText = etu.find('a').get_text()
                 # store data in dict
                 urlDict[currArtUrl] = {}
-                urlDict[currArtUrl]['date'] = currArtTime
+                urlDict[currArtUrl]['date'] = currTime
                 urlDict[currArtUrl]['text'] = currArtText
+                urlDict[currArtUrl]['source'] = "Economic Times"
             except:
                 print "curr article update failed"
                 continue

@@ -49,6 +49,7 @@ class GetEcTimesNews(object):
         # get required data from a url
         import bs4
         import urllib2
+        import datetime
         # get the list of news articles
         if newsUrl == '':
             return None
@@ -74,13 +75,26 @@ class GetEcTimesNews(object):
                 # get the actual url of the news website
                 currUrlTextDiv = currSoup.findAll( \
                     attrs={'class': "artText"} )
-                currTime = str(currSoup.find( \
-                    attrs={'class': "byline"} ).get_text())
+                # get time and convert it into datetime obj
+                try:
+                    currTime = str(currSoup.find( \
+                        attrs={'class': "byline"} ).get_text())
+                    if '|' in currTime:
+                        currTime = currTime.split( '| ', 1 )[1]
+                    dtFmt = '%d %b, %Y, %H.%M%p IST'
+                    currTime = datetime.datetime.\
+                                strptime(currTime,dtFmt)
+                except:
+                    # get today's date if we are not able to convert to
+                    # datetime object.
+                    print "couldn't retrieve date, using today's date"
+                    currTime = datetime.date.today()
                 currText = currUrlTextDiv[0].get_text()
                 if any(word in currText for word in stockData):
                     rlvntArticles[currUrl] = {}
                     rlvntArticles[currUrl]['text'] = currText
                     rlvntArticles[currUrl]['date'] = currTime
+                    rlvntArticles[currUrl]['source'] = "Economic Times"
                 else:
                     continue
             except:
