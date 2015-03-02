@@ -41,10 +41,16 @@ class MongoUtils(object):
 
     def get_news(self):
         # get news items from the db
-        # which we got in the last 3-4 days
+        # which we got in the last 2 days
         # also limit the number of items to 20.
-        newsArt = self.newsColl.find_one()
-        return newsArt
+        import datetime
+        # get curr date
+        currDate = datetime.datetime.today()
+        # get a date which retreives articles 
+        # that are at the most 2 days old.
+        queryDate = currDate - datetime.timedelta(days=2)
+        newsArt = self.newsColl.find( {'date':{'$gt':queryDate}} )
+        return list(newsArt)
 
     def close(self):
         # close connections to mongodb
