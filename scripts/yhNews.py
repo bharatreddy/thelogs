@@ -92,6 +92,9 @@ class GetYahooNews(object):
                 for nn in newsArtclePTag:
                     newsText += nn.get_text()
                     newsText += ' '
+                # check if there is any text
+                if len(newsText) <= 2:
+                    continue
                 # check if the any stock names/symbols
                 # are found in the string.
                 # first get the list of stocknames and symbols

@@ -94,6 +94,9 @@ class GetEcTimesNews(object):
                     print "couldn't retrieve date, using today's date"
                     currTime = datetime.date.today()
                 currText = currUrlTextDiv[0].get_text()
+                # if no text present, skip the article
+                if len(currText) <= 2:
+                    continue
                 if any(word in currText for word in stockData):
                     rlvntArticles[currUrl] = {}
                     rlvntArticles[currUrl]['text'] = currText

@@ -81,11 +81,15 @@ class GetEcTimesRecos(object):
                     print "couldn't retrieve date, using today's date"
                     currTime = datetime.date.today()
                 currArtText = etu.find('a').get_text()
+                # if no text present, skip the article
+                if len(currArtText) <= 2:
+                    continue
                 # store data in dict
-                urlDict[currArtUrl] = {}
-                urlDict[currArtUrl]['date'] = currTime
-                urlDict[currArtUrl]['text'] = currArtText
-                urlDict[currArtUrl]['source'] = "Economic Times"
+                idUrl = recosBaseUrl + currArtUrl
+                urlDict[idUrl] = {}
+                urlDict[idUrl]['date'] = currTime
+                urlDict[idUrl]['text'] = currArtText
+                urlDict[idUrl]['source'] = "Economic Times"
             except:
                 print "curr article update failed"
                 continue
