@@ -255,7 +255,7 @@ def summary():
         smryTransactions = getProfitLoss(userId)
         smryTransactions = smryTransactions.T.to_dict().values()
         return render_template('summary.html', \
-            summaryTrans=smryTransactions)
+            summaryTrans=smryTransactions, profileName=userName)
 
 def getProfitLoss(userId):
     # get acvtive shares of the user along with the current price
@@ -312,9 +312,30 @@ def signout():
 def news():
     from scripts.mongoLib import MongoUtils
     import os
-    mnObj = MongoUtils()
-    newsItems = mnObj.get_news()
-    return "Test"
+    # fucntion to access the profile page of the user
+    if 'email' not in session:
+        return redirect(url_for('signin'))
+    # Check if the user is in our db
+    user = User.query.filter_by(email = session['email']).first()
+    dbRaw = \
+    MySQLdb.connect( user='root', host='localhost', port=3306, db='Logbook' )
+    # check if the email-id is already taken
+    queryUserChk = " SELECT userid, name FROM Users WHERE email = " \
+    + "'" + session['email'] + "'"
+    dbRaw.query( queryUserChk )
+    userDetails = dbRaw.store_result().fetch_row( maxrows=0 )
+    # check if we have the email in our database of users.
+    if userDetails is None:
+        return redirect(url_for('signin'))
+    else:
+        userId = userDetails[0][0]
+        userName = userDetails[0][1]
+        # get news items from MongoDB
+        mnObj = MongoUtils()
+        newsArt = mnObj.get_news()
+        mnObj.close()
+        return render_template('news_list.html', \
+            newsArticles=newsArt, profileName=userName)
 
 @app.route("/<pagename>")
 def regularpage( pagename=None ):

@@ -66,22 +66,18 @@
                     </div>
                 </div>
                 <table class="table table-bordered table-hover">
-                   <caption><font size="6" color="steelblue">Income</font></caption>
-                   <thead>
-                      <tr>
-                         <th>Stock</th>
-                         <th>Stock Exchange</th>
-                         <th>Number of shares sold</th>
-                         <th>Profit(+)/Loss(-)</th>
-                      </tr>
-                   </thead>
+                   <caption><font size="6" color="steelblue">Recent News</font></caption>
                    <tbody>
-                      {% for smryTrans in summaryTrans %}
+                      {% for news in newsArticles %}
                       <tr class="active">
-                         <td>{{ smryTrans.stock_symbol }}</td>
-                         <td>{{ smryTrans.stock_exchange }}</td>
-                         <td>{{ smryTrans.quantity_sell }}</td>
-                         <td>{{ smryTrans.profit }}</td>
+                        <tr>
+                            <td>Date - {{ news.date }}, Source - {{ news.source }}</td>
+                        </tr>
+                        <tr>
+                            <td>Original Link - {{ news._id }}</td>
+                        </tr>
+                        <tr>
+                            <td><font color="steelblue">{{ news.text }}</font></td>
                       </tr>
                       {% endfor %}
                    </tbody>
