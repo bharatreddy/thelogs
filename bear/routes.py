@@ -308,6 +308,14 @@ def signout():
     session.pop('email', None)
     return redirect(url_for("home"))
 
+@app.route("/news")
+def news():
+    import scripts/mongoLib
+    import os
+    mnObj = mongoLib.MongoUtils()
+    newsItems = mnObj.get_news()
+    return str(newsItems)
+
 @app.route("/<pagename>")
 def regularpage( pagename=None ):
     """

@@ -39,6 +39,13 @@ class MongoUtils(object):
             # self.recosColl.update( {'id':nd}, currDict, upsert=False )
             self.recosColl.save(currDict)
 
+    def get_news(self):
+        # get news items from the db
+        # which we got in the last 3-4 days
+        # also limit the number of items to 20.
+        newsArt = self.newsColl.find_one()
+        return newsArt
+
     def close(self):
         # close connections to mongodb
         self.conn.close()
