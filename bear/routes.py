@@ -310,11 +310,11 @@ def signout():
 
 @app.route("/news")
 def news():
-    import scripts/mongoLib
+    from scripts.mongoLib import MongoUtils
     import os
-    mnObj = mongoLib.MongoUtils()
+    mnObj = MongoUtils()
     newsItems = mnObj.get_news()
-    return str(newsItems)
+    return "Test"
 
 @app.route("/<pagename>")
 def regularpage( pagename=None ):
