@@ -67,17 +67,24 @@
                 </div>
                 <table class="table table-bordered table-hover">
                    <caption><font size="6" color="steelblue">Recent Recommendations</font></caption>
+                   <thead>
+                      <tr>
+                         <th>Date</th>
+                         <th>Source</th>
+                         <th>Recommendation</th>
+                      </tr>
+                   </thead>
                    <tbody>
                       {% for recos in recosArticles %}
                       <tr class="active">
                         <tr>
-                            <td>Date - {{ recos.date }}, Source - {{ recos.source }}</td>
-                        </tr>
-                        <tr>
-                            <td>Original Link - {{ recos._id }}</td>
-                        </tr>
-                        <tr>
-                            <td><font color="steelblue">{{ recos.text }}</font></td>
+                            <td>{{ recos.date }}</td> 
+                            <td>{{ recos.source }}</td>
+                            <td>
+                            <a href = {{recos._id}} target="_blank">
+                            <font color="steelblue"><strong>{{ recos.text }}</strong></font>
+                            </a>
+                            </td>
                       </tr>
                       {% endfor %}
                    </tbody>
