@@ -44,12 +44,16 @@ class MongoUtils(object):
         # which we got in the last 2 days
         # also limit the number of items to 20.
         import datetime
+        import pymongo
         # get curr date
         currDate = datetime.datetime.today()
         # get a date which retreives articles 
         # that are at the most 2 days old.
         queryDate = currDate - datetime.timedelta(days=2)
-        newsArt = self.newsColl.find( {'date':{'$gt':queryDate}} )
+        # sort results by date as well, most recent first
+        newsArt = self.newsColl.\
+                find( {'date':{'$gt':queryDate}} ).\
+                sort("date", pymongo.DESCENDING)
         return list(newsArt)
 
     def get_recos(self):
@@ -57,12 +61,16 @@ class MongoUtils(object):
         # which we got in the last 2 days
         # also limit the number of items to 20.
         import datetime
+        import pymongo
         # get curr date
         currDate = datetime.datetime.today()
         # get a date which retreives articles 
         # that are at the most 2 days old.
         queryDate = currDate - datetime.timedelta(days=2)
-        recosArt = self.recosColl.find( {'date':{'$gt':queryDate}} )
+        # sort results by date as well, most recent first
+        recosArt = self.recosColl.\
+                find( {'date':{'$gt':queryDate}} ).\
+                sort("date", pymongo.DESCENDING)
         return list(recosArt)
 
     def close(self):
