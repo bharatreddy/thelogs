@@ -85,7 +85,7 @@ class GetEcTimesRecos(object):
                 if len(currArtText) <= 2:
                     continue
                 # store data in dict
-                idUrl = recosBaseUrl + currArtUrl
+                idUrl = self.baseNewsUrl + currArtUrl
                 urlDict[idUrl] = {}
                 urlDict[idUrl]['date'] = currTime
                 urlDict[idUrl]['text'] = currArtText
