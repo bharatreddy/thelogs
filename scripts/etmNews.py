@@ -54,6 +54,7 @@ class GetEcTimesNews(object):
         import bs4
         import urllib2
         import datetime
+        import pandas
         # get the list of news articles
         if newsUrl == '':
             return None
@@ -99,9 +100,24 @@ class GetEcTimesNews(object):
                 # if no text present, skip the article
                 if len(currText) <= 2:
                     continue
+                # we'll also keep track of the words(stock symbols)
+                # that are being used in the article.
+                stocksMentioned = ""
+                # We'll use pandas to do store stock symbols and 
+                # stock names as a series.
+                stockDF = pandas.DataFrame( \
+                    {'sym':stockSyms, 'name':stockNames} )
                 if any(word in currText for word in stockData):
+                    # get the stock names and syms used
+                    stockDF['used'] = stockDF.apply(\
+                        lambda x: True if ((x['sym'] in currText)\
+                         or (x['name'] in currText)) else False, axis=1 )
                     rlvntArticles[currUrl] = {}
                     rlvntArticles[currUrl]['text'] = currText
+                    rlvntArticles[currUrl]['stock_symbols'] = \
+                        stockDF[ stockDF['used'] == True ]['sym'].tolist()
+                    rlvntArticles[currUrl]['stock_names'] = \
+                        stockDF[ stockDF['used'] == True ]['name'].tolist()
                     rlvntArticles[currUrl]['date'] = currTime
                     rlvntArticles[currUrl]['title'] = currArtTitle.get_text()
                     rlvntArticles[currUrl]['source'] = "Economic Times"

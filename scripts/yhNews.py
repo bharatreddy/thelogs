@@ -59,6 +59,7 @@ class GetYahooNews(object):
         import urllib2
         import re
         import datetime
+        import pandas
         rlvntArticles = {}
         for al in articleList:
             # get the full url of the page
@@ -104,6 +105,14 @@ class GetYahooNews(object):
                 stockData = stockSyms + stockNames
                 # add some additional terms
                 # stockData += ['shares', 'stocks', 'industry']
+                # we'll also keep track of the words(stock symbols)
+                # that are being used in the article.
+                stocksMentioned = ""
+                # We'll use pandas to do store stock symbols and 
+                # stock names as a series.
+                stockSeries = pandas.Series( stockNames, index=stockSyms )
+                print newsText
+                break
                 if any(word in newsText for word in stockData):
                     rlvntArticles[fullNewsUrl] = {}
                     rlvntArticles[fullNewsUrl]['text'] = newsText
