@@ -70,6 +70,8 @@ class GetYahooNews(object):
                 # the text is located in div with class labelled "entry-content"
                 newsArtcleDiv = soup.findAll( \
                 attrs={'id': "mediaarticlebody"} )
+                newsArtcleTitle = soup.find( \
+                attrs={'class': "headline"} )
                 # check for any content
                 if len(newsArtcleDiv) == 0:
                     continue
@@ -108,6 +110,8 @@ class GetYahooNews(object):
                     # get date from current obj, its not simple 
                     # to get datetime from python datetime obj
                     rlvntArticles[fullNewsUrl]['date'] = currTime
+                    rlvntArticles[fullNewsUrl]['title'] = \
+                            newsArtcleTitle.get_text()
                     rlvntArticles[fullNewsUrl]['source'] = "Yahoo News"
                 else:
                     continue
