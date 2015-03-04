@@ -79,6 +79,8 @@ class GetEcTimesNews(object):
                 # get the actual url of the news website
                 currUrlTextDiv = currSoup.findAll( \
                     attrs={'class': "artText"} )
+                currArtTitle = currSoup.find( \
+                    attrs={'class': "title"} )
                 # get time and convert it into datetime obj
                 try:
                     currTime = str(currSoup.find( \
@@ -101,6 +103,7 @@ class GetEcTimesNews(object):
                     rlvntArticles[currUrl] = {}
                     rlvntArticles[currUrl]['text'] = currText
                     rlvntArticles[currUrl]['date'] = currTime
+                    rlvntArticles[currUrl]['title'] = currArtTitle.get_text()
                     rlvntArticles[currUrl]['source'] = "Economic Times"
                 else:
                     continue
