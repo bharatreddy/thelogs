@@ -102,7 +102,6 @@ class GetEcTimesNews(object):
                     continue
                 # we'll also keep track of the words(stock symbols)
                 # that are being used in the article.
-                stocksMentioned = ""
                 # We'll use pandas to do store stock symbols and 
                 # stock names as a series.
                 stockDF = pandas.DataFrame( \

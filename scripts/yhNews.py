@@ -105,17 +105,21 @@ class GetYahooNews(object):
                 stockData = stockSyms + stockNames
                 # add some additional terms
                 # stockData += ['shares', 'stocks', 'industry']
-                # we'll also keep track of the words(stock symbols)
-                # that are being used in the article.
-                stocksMentioned = ""
                 # We'll use pandas to do store stock symbols and 
                 # stock names as a series.
-                stockSeries = pandas.Series( stockNames, index=stockSyms )
-                print newsText
-                break
+                stockDF = pandas.DataFrame( \
+                    {'sym':stockSyms, 'name':stockNames} )
                 if any(word in newsText for word in stockData):
+                    # get the stock names and syms used
+                    stockDF['used'] = stockDF.apply(\
+                        lambda x: True if ((x['sym'] in newsText)\
+                         or (x['name'] in newsText)) else False, axis=1 )
                     rlvntArticles[fullNewsUrl] = {}
                     rlvntArticles[fullNewsUrl]['text'] = newsText
+                    rlvntArticles[fullNewsUrl]['stock_symbols'] = \
+                        stockDF[ stockDF['used'] == True ]['sym'].tolist()
+                    rlvntArticles[fullNewsUrl]['stock_names'] = \
+                        stockDF[ stockDF['used'] == True ]['name'].tolist()
                     # get date from current obj, its not simple 
                     # to get datetime from python datetime obj
                     rlvntArticles[fullNewsUrl]['date'] = currTime
