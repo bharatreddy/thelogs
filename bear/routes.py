@@ -333,6 +333,11 @@ def news():
         # get news items from MongoDB
         mnObj = MongoUtils()
         newsArt = mnObj.get_news()
+        # get the list of stock names in each
+        # article of the dict, then convert
+        # it into a string format we can use.
+        for na in newsArt:
+            na['stock_string'] = ", ".join(na['stock_names'])
         mnObj.close()
         return render_template('news_list.html', \
             newsArticles=newsArt, profileName=userName)
