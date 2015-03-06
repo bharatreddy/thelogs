@@ -1,40 +1,40 @@
 {% extends "base_sidebar.html" %}
 {% block content %}
-    <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>{{ profileName }}</h1>
-                    </div>
-                </div>
-                <table class="table table-bordered table-hover">
-                   <caption><font size="6" color="steelblue">Recent News</font></caption>
-                   <thead>
-                      <tr>
-                         <th>Date</th>
-                         <th>Source</th>
-                         <th>Headline</th>
-                         <th>Stocks Mentioned</th>
-                      </tr>
-                   </thead>
-                   <tbody>
-                      {% for news in newsArticles %}
-                      <tr class="active">
-                        <tr>
-                            <td>{{ news.date }}</td> 
-                            <td>{{ news.source }}</td>
-                            <td>
-                            <a href = {{news._id}} target="_blank">
-                            <font color="steelblue"><strong>{{ news.title }}</strong></font>
-                            </a>
-                            </td>
-                            <td>{{ news.stock_string }}</td>
-                      </tr>
-                      {% endfor %}
-                   </tbody>
-                </table>
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>{{ profileName }}</h1>
             </div>
         </div>
-        <!-- /#page-content-wrapper -->
+        <table class="table table-bordered table-hover">
+           <caption><font size="6" color="steelblue">Recent News</font></caption>
+           <thead>
+              <tr>
+                 <th>Date</th>
+                 <th>Source</th>
+                 <th>Headline</th>
+                 <th>Stocks Mentioned</th>
+              </tr>
+           </thead>
+           <tbody>
+              {% for news in newsArticles %}
+              <tr class="active">
+                <tr>
+                    <td>{{ news.date }}</td> 
+                    <td>{{ news.source }}</td>
+                    <td>
+                    <a href = {{news._id}} target="_blank">
+                    <font color="steelblue"><strong>{{ news.title }}</strong></font>
+                    </a>
+                    </td>
+                    <td>{{ news.stock_string }}</td>
+              </tr>
+              {% endfor %}
+           </tbody>
+        </table>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
 {% endblock %}

@@ -1,65 +1,66 @@
 {% extends "base_sidebar.html" %}
 {% block content %}
-    <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>{{ profileName }}</h1>
-                    </div>
-                </div>
-                <table class="table table-bordered table-hover">
-                   <caption><font size="6" color="steelblue">Recent Transactions</font></caption>
-                   <thead>
-                      <tr>
-                         <th>Stock</th>
-                         <th>Stock Exchange</th>
-                         <th>Transaction type</th>
-                         <th>Date of Transaction</th>
-                         <th>Number of shares</th>
-                         <th>Unit Cost</th>
-                         <th>Total Price</th>
-                      </tr>
-                   </thead>
-                   <tbody>
-                      {% for transctns in transctnStcks %}
-                      <tr class="active">
-                         <td>{{ transctns.stock_symbol }}</td>
-                         <td>{{ transctns.stock_exchange }}</td>
-                         <td>{{ transctns.transaction_type }}</td>
-                         <td>{{ transctns.date }}</td>
-                         <td>{{ transctns.quantity }}</td>
-                         <td>{{ transctns.cost_per_unit }}</td>
-                         <td>{{ transctns.total_cost }}</td>
-                      </tr>
-                      {% endfor %}
-                   </tbody>
-                </table>
-                <table class="table table-bordered table-hover">
-                   <caption><font size="6" color="steelblue">Active stocks</font></caption>
-                   <thead>
-                      <tr>
-                         <th>Stock</th>
-                         <th>Number of shares</th>
-                         <th>Stock Exchange</th>
-                         <th>Current price</th>
-                         <th>Price updated on</th>
-                         <th>Revenue</th>
-                      </tr>
-                   </thead>
-                   <tbody>
-                      {% for actvstck in activeStocks %}
-                      <tr class="active">
-                         <td>{{ actvstck.stock_symbol }}</td>
-                         <td>{{ actvstck.active_num }}</td>
-                         <td>{{ actvstck.stock_exchange }}</td>
-                         <td>{{ actvstck.current_price }}</td>
-                         <td>{{ actvstck.price_updated }}</td>
-                         <td>{{ actvstck.revenue }}</td>
-                      </tr>
-                      {% endfor %}
-                   </tbody>
-                </table>
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>{{ profileName }}</h1>
             </div>
         </div>
-        <!-- /#page-content-wrapper -->
+        <table class="table table-bordered table-hover">
+           <caption><font size="6" color="steelblue">Recent Transactions</font></caption>
+           <thead>
+              <tr>
+                 <th>Stock</th>
+                 <th>Stock Exchange</th>
+                 <th>Transaction type</th>
+                 <th>Date of Transaction</th>
+                 <th>Number of shares</th>
+                 <th>Unit Cost</th>
+                 <th>Total Price</th>
+              </tr>
+           </thead>
+           <tbody>
+              {% for transctns in transctnStcks %}
+              <tr class="active">
+                 <td>{{ transctns.stock_symbol }}</td>
+                 <td>{{ transctns.stock_exchange }}</td>
+                 <td>{{ transctns.transaction_type }}</td>
+                 <td>{{ transctns.date }}</td>
+                 <td>{{ transctns.quantity }}</td>
+                 <td>{{ transctns.cost_per_unit }}</td>
+                 <td>{{ transctns.total_cost }}</td>
+              </tr>
+              {% endfor %}
+           </tbody>
+        </table>
+        <table class="table table-bordered table-hover">
+           <caption><font size="6" color="steelblue">Active stocks</font></caption>
+           <thead>
+              <tr>
+                 <th>Stock</th>
+                 <th>Number of shares</th>
+                 <th>Stock Exchange</th>
+                 <th>Current price</th>
+                 <th>Price updated on</th>
+                 <th>Revenue</th>
+              </tr>
+           </thead>
+           <tbody>
+              {% for actvstck in activeStocks %}
+              <tr class="active">
+                 <td>{{ actvstck.stock_symbol }}</td>
+                 <td>{{ actvstck.active_num }}</td>
+                 <td>{{ actvstck.stock_exchange }}</td>
+                 <td>{{ actvstck.current_price }}</td>
+                 <td>{{ actvstck.price_updated }}</td>
+                 <td>{{ actvstck.revenue }}</td>
+              </tr>
+              {% endfor %}
+           </tbody>
+        </table>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
 {% endblock %}
